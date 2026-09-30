@@ -145,6 +145,8 @@ def main(args):
                     worker.teacher.load_state_dict(cs["teacher"])
                     worker.projector.load_state_dict(cs["projector"])
                     worker.student.load_state_dict(global_state, strict=False)
+                    if worker.device.type == "cuda":
+                        torch.cuda.reset_peak_memory_stats(worker.device)
                     seed = args.seed * 100003 + rnd * 1009 + clients.index(cid)
                     delta, stats = client_update(worker.teacher, worker.student, worker.projector, images, labels,
                                                  splits[cid]["train"], args, worker.device, seed)
@@ -152,6 +154,10 @@ def main(args):
                     te_idx = splits[cid]["test"][: args.max_eval or None]
                     tp, ty, tl = predict(worker.teacher, images, labels, te_idx, args, worker.device)
                     stats.update(teacher_test_acc=float((tp == ty).mean()), teacher_test_loss=tl)
+                    if worker.device.type == "cuda":
+                        stats.update(gpu=worker.device.index,
+                                     peak_alloc_gb=torch.cuda.max_memory_allocated(worker.device) / 2**30,
+                                     peak_reserved_gb=torch.cuda.max_memory_reserved(worker.device) / 2**30)
                     save_atomic({"teacher": {k: v.cpu() for k, v in worker.teacher.state_dict().items()},
                                  "projector": {k: v.cpu() for k, v in worker.projector.state_dict().items()}},
                                 client_path(ckpt_dir, cid))

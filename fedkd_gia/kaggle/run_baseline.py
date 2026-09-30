@@ -21,6 +21,10 @@ def sh(cmd):
 sh("nvidia-smi")
 sh("pip install -q 'timm>=1.0.9'")
 
+# VRAM/utilization of every GPU once a minute, interleaved with the training log.
+subprocess.Popen("nvidia-smi --query-gpu=timestamp,index,memory.used,memory.total,utilization.gpu "
+                 "--format=csv,noheader -l 60 | sed -u 's/^/VRAM /'", shell=True)
+
 data_root = os.path.dirname(glob.glob("/kaggle/input/**/driver_imgs_list.csv", recursive=True)[0])
 prev = [os.path.dirname(p) for p in glob.glob("/kaggle/input/**/run/state.json", recursive=True)]
 print("data_root:", data_root, "| previous runs:", prev, flush=True)
