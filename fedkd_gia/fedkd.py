@@ -58,7 +58,7 @@ def client_update(teacher, student, projector, images, labels, train_idx, args, 
     teacher.train(); student.train(); projector.train()
     params = [p for m in (teacher, student, projector) for p in m.parameters() if p.requires_grad]
     opt = torch.optim.Adam(params, lr=args.lr)
-    use_amp = device.type == "cuda" and args.amp
+    use_amp = device.type == "cuda" and bool(args.amp)
     scaler = torch.amp.GradScaler("cuda", enabled=use_amp)
 
     g = torch.Generator().manual_seed(seed)
@@ -107,7 +107,7 @@ def predict(model, images, labels, idx, args, device):
     loader = DataLoader(CachedImages(images, labels, idx), batch_size=args.eval_batch_size, shuffle=False,
                         num_workers=args.num_workers, pin_memory=device.type == "cuda")
     preds, ys, loss_sum = [], [], 0.0
-    use_amp = device.type == "cuda" and args.amp
+    use_amp = device.type == "cuda" and bool(args.amp)
     for x, y in loader:
         x, y = x.to(device, non_blocking=True), y.to(device, non_blocking=True)
         with torch.autocast(device.type, dtype=torch.float16, enabled=use_amp):
