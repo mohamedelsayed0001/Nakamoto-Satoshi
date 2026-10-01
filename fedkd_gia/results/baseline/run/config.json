@@ -1,0 +1,21 @@
+{
+  "data_root": "/kaggle/input/competitions/state-farm-distracted-driver-detection",
+  "cache_dir": "/tmp/fedkd_cache",
+  "out_dir": "/kaggle/working/run",
+  "resume_from": null,
+  "rounds": 30,
+  "local_epochs": 5,
+  "batch_size": 8,
+  "eval_batch_size": 64,
+  "lr": 3e-05,
+  "test_frac": 0.2,
+  "seed": 42,
+  "num_workers": 2,
+  "amp": 1,
+  "pretrained": 1,
+  "freeze_embeddings": 1,
+  "max_clients": 0,
+  "max_steps": 0,
+  "max_eval": 0,
+  "time_budget_hours": 11.2
+}
