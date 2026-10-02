@@ -41,6 +41,14 @@ def score(rec, gt):
     return float(np.mean(per_image)), per_image, cols.tolist()
 
 
+def align(rec, cols):
+    """Reorder reconstructions so that column j holds the one matched to ground-truth image j."""
+    order = [0] * len(cols)
+    for r, c in enumerate(cols):
+        order[c] = r
+    return rec[order]
+
+
 def save_grid(path, gt, recs):
     rows = [gt] + recs
     t = torch.cat([torch.cat(list((r * 0.5 + 0.5).clamp(0, 1).cpu()), dim=2) for r in rows], dim=1)
@@ -116,8 +124,8 @@ def main():
             best = int(np.argmin(final_losses))
             consensus = torch.stack(finals).mean(0)
 
-            psnr_cons, per_cons, _ = score(consensus, gt)
-            psnr_best, per_best, _ = score(finals[best], gt)
+            psnr_cons, per_cons, cols_cons = score(consensus, gt)
+            psnr_best, per_best, cols_best = score(finals[best], gt)
             seed_psnrs = [score(x, gt)[0] for x in finals]
             # No-information floor: a uniform gray image (the mean of the input range).
             psnr_gray = score(torch.zeros_like(gt), gt)[0]
@@ -126,7 +134,8 @@ def main():
                    "psnr_consensus": psnr_cons, "psnr_best_seed": psnr_best, "psnr_per_seed": seed_psnrs, "psnr_gray_floor": psnr_gray,
                    "psnr_per_image_consensus": per_cons, "psnr_per_image_best_seed": per_best,
                    "final_grad_loss": final_losses, "seconds": time.time() - a0, "history": history}
-            save_grid(os.path.join(args.out_dir, f"{setting}_{cid}.png"), gt, [consensus, finals[best]])
+            save_grid(os.path.join(args.out_dir, f"{setting}_{cid}.png"), gt,
+                      [align(consensus, cols_cons), align(finals[best], cols_best)])
             torch.save({"consensus": consensus.cpu(), "seeds": [x.cpu() for x in finals]},
                        os.path.join(args.out_dir, f"{setting}_{cid}_rec.pt"))
             with open(res_path, "a") as f:

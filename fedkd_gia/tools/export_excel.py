@@ -1,0 +1,181 @@
+"""Collect the baseline and every attack experiment under results/ into one Excel workbook.
+
+Sheets:
+  Baseline_Rounds   per-round FedKD metrics (no attack)
+  Baseline_Clients  per-driver accuracy of the final global student and private teacher
+  Baseline_Summary  final and best values (formulas over Baseline_Rounds)
+  <exp>             one row per attack (client x setting) + per-setting averages (formulas)
+  <exp>_Images      ground truth vs. reconstruction grids
+Experiments are folders under results/ containing results.jsonl (searched recursively).
+
+usage: python tools/export_excel.py [--results results] [--out results/fedkd_gia_results.xlsx]
+"""
+import argparse
+import glob
+import json
+import os
+
+from openpyxl import Workbook
+from openpyxl.drawing.image import Image as XLImage
+from openpyxl.styles import Alignment, Font, PatternFill
+from openpyxl.utils import get_column_letter
+from PIL import Image
+
+FONT = "Arial"
+HEAD_FILL = PatternFill("solid", start_color="DDEBF7")
+SETTING_NAMES = {"none": "S1 no teacher (CE only)", "dinov2": "S2 DINOv2 ViT-B/14 surrogate",
+                 "vitb": "S3 unused ImageNet ViT-B/16 surrogate"}
+
+
+def style_header(ws, row, ncols):
+    for c in range(1, ncols + 1):
+        cell = ws.cell(row=row, column=c)
+        cell.font = Font(name=FONT, bold=True)
+        cell.fill = HEAD_FILL
+        cell.alignment = Alignment(horizontal="center", vertical="center", wrap_text=True)
+
+
+def write_table(ws, start_row, headers, rows, formats=None):
+    for j, h in enumerate(headers, 1):
+        ws.cell(row=start_row, column=j, value=h)
+    style_header(ws, start_row, len(headers))
+    for i, r in enumerate(rows, start_row + 1):
+        for j, v in enumerate(r, 1):
+            cell = ws.cell(row=i, column=j, value=v)
+            cell.font = Font(name=FONT)
+            if formats and formats.get(j):
+                cell.number_format = formats[j]
+    for j in range(1, len(headers) + 1):
+        ws.column_dimensions[get_column_letter(j)].width = max(12, min(40, len(str(headers[j - 1])) + 4))
+    return start_row + len(rows)
+
+
+def baseline_sheets(wb, run_dir):
+    recs = [json.loads(l) for l in open(os.path.join(run_dir, "metrics.jsonl"))]
+    ws = wb.create_sheet("Baseline_Rounds")
+    headers = ["Round", "Global student acc", "Global student macro-F1", "Mean per-client student acc",
+               "Mean per-client teacher acc", "Round time (min)"]
+    rows = [[r["round"], r["global_student_acc"], r["global_student_macro_f1"], r["mean_client_student_acc"],
+             r["mean_client_teacher_acc"], r["round_seconds"] / 60] for r in recs]
+    pct = {2: "0.00%", 3: "0.0000", 4: "0.00%", 5: "0.00%", 6: "0.0"}
+    last = write_table(ws, 1, headers, rows, pct)
+    ws.freeze_panes = "A2"
+
+    wc = wb.create_sheet("Baseline_Clients")
+    final = recs[-1]["per_client"]
+    rows = [[cid, v["student_acc"], v["teacher_test_acc"], v["train_acc_s"], v["train_acc_t"]]
+            for cid, v in sorted(final.items())]
+    write_table(wc, 1, ["Driver (client)", f"Global student test acc (round {recs[-1]['round']})",
+                        "Private teacher test acc", "Student train acc (local)", "Teacher train acc (local)"],
+                rows, {2: "0.00%", 3: "0.00%", 4: "0.00%", 5: "0.00%"})
+    wc.freeze_panes = "A2"
+
+    s = wb.create_sheet("Baseline_Summary")
+    n = last  # last data row in Baseline_Rounds
+    items = [
+        ("Final global student acc", f"=Baseline_Rounds!B{n}", "0.00%"),
+        ("Final global student macro-F1", f"=Baseline_Rounds!C{n}", "0.0000"),
+        ("Final mean private teacher acc", f"=Baseline_Rounds!E{n}", "0.00%"),
+        ("Best global student acc", f"=MAX(Baseline_Rounds!B2:B{n})", "0.00%"),
+        ("Best global student macro-F1", f"=MAX(Baseline_Rounds!C2:C{n})", "0.0000"),
+        ("Best mean private teacher acc", f"=MAX(Baseline_Rounds!E2:E{n})", "0.00%"),
+        ("Total training time (h)", f"=SUM(Baseline_Rounds!F2:F{n})/60", "0.00"),
+    ]
+    write_table(s, 1, ["Metric", "Value"], [])
+    for i, (k, f, fmt) in enumerate(items, 2):
+        s.cell(row=i, column=1, value=k).font = Font(name=FONT)
+        c = s.cell(row=i, column=2, value=f)
+        c.font = Font(name=FONT)
+        c.number_format = fmt
+    s.column_dimensions["A"].width = 34
+    s.cell(row=len(items) + 3, column=1,
+           value="Setting: 26 clients (one per driver), 30 rounds x 5 local epochs, batch 8, ViT-B mentor / ViT-S "
+                 "mentee, full FedKD loss, no SVD compression. Teacher F1 was not logged.").font = Font(name=FONT, italic=True)
+
+
+def experiment_sheets(wb, name, files):
+    recs = [json.loads(l) for f in files for l in open(f)]
+    recs.sort(key=lambda r: (list(SETTING_NAMES).index(r["setting"]) if r["setting"] in SETTING_NAMES else 9, r["client"]))
+    cfg_path = os.path.join(os.path.dirname(files[0]), "config.json")
+    cfg = json.load(open(cfg_path)) if os.path.exists(cfg_path) else {}
+
+    ws = wb.create_sheet(name[:31])
+    headers = ["Setting", "Client", "Label restoration acc", "PSNR consensus (dB)", "PSNR best seed (dB)",
+               "PSNR gray floor (dB)", "Consensus - floor (dB)", "Final grad-match loss (best seed)", "Time (min)"]
+    rows = []
+    for i, r in enumerate(recs, 2):
+        rows.append([SETTING_NAMES.get(r["setting"], r["setting"]), r["client"], r["label_acc"], r["psnr_consensus"],
+                     r["psnr_best_seed"], r.get("psnr_gray_floor"), f"=D{i}-F{i}" if "psnr_gray_floor" in r else None, min(r["final_grad_loss"]),
+                     r["seconds"] / 60])
+    last = write_table(ws, 1, headers, rows, {3: "0.0%", 4: "0.00", 5: "0.00", 6: "0.00", 7: "0.00", 8: "0.0000",
+                                               9: "0.0"})
+    ws.column_dimensions["A"].width = 34
+    ws.freeze_panes = "A2"
+
+    # Per-setting averages.
+    r0 = last + 3
+    ws.cell(row=r0 - 1, column=1, value="Averages per setting").font = Font(name=FONT, bold=True)
+    sum_headers = ["Setting", "Attacks", "Label restoration acc", "PSNR consensus (dB)", "PSNR best seed (dB)",
+                   "PSNR gray floor (dB)", "Consensus - floor (dB)"]
+    write_table(ws, r0, sum_headers, [])
+    settings = [s for s in SETTING_NAMES if any(r["setting"] == s for r in recs)]
+    rng = lambda col: f"{col}$2:{col}${last}"  # noqa: E731
+    for k, s in enumerate(settings, r0 + 1):
+        label = SETTING_NAMES[s]
+        ws.cell(row=k, column=1, value=label).font = Font(name=FONT)
+        ws.cell(row=k, column=2, value=f'=COUNTIF({rng("A")},A{k})')
+        for col_idx, src in zip(range(3, 8), "CDEFG"):
+            c = ws.cell(row=k, column=col_idx, value=f'=AVERAGEIFS({rng(src)},{rng("A")},A{k})')
+            c.number_format = "0.0%" if src == "C" else "0.00"
+            c.font = Font(name=FONT)
+
+    note_row = r0 + len(settings) + 2
+    notes = [
+        "Threat model: honest-but-curious server sees one client's student gradient for one local step "
+        "(batch 8, distinct labels, round-30 global student). Private teacher and projector are unknown to the attacker.",
+        "PSNR: images in [0,1], reconstructions matched one-to-one to ground truth (Hungarian), averaged over the batch. "
+        "Consensus = pixel mean over seeds; best seed = lowest gradient-matching loss (attacker-selectable).",
+        "Gray floor: PSNR of a uniform gray image; a reconstruction below it carries no recoverable pixel information.",
+        f"Attack config: {json.dumps({k: cfg[k] for k in ('iterations', 'num_seeds', 'lr', 'alpha_tv', 'alpha_l2', 'alpha_group', 'alpha_noise') if k in cfg})}",
+    ]
+    for i, t in enumerate(notes):
+        ws.cell(row=note_row + i, column=1, value=t).font = Font(name=FONT, italic=True)
+
+    # Images.
+    pngs = sorted(p for f in files for p in glob.glob(os.path.join(os.path.dirname(f), "*.png")))
+    if pngs:
+        wi = wb.create_sheet((name + "_Images")[:31])
+        wi.cell(row=1, column=1, value="Each grid: row 1 = actual batch, row 2 = consensus reconstruction, "
+                                       "row 3 = best-seed reconstruction").font = Font(name=FONT, bold=True)
+        row = 3
+        for p in pngs:
+            stem = os.path.basename(p)[:-4]
+            setting, client = stem.split("_", 1)
+            wi.cell(row=row, column=1, value=f"{SETTING_NAMES.get(setting, setting)} - client {client}").font = Font(name=FONT, bold=True)
+            w, h = Image.open(p).size
+            img = XLImage(p)
+            img.width, img.height = 1100, int(1100 * h / w)
+            wi.add_image(img, f"A{row + 1}")
+            row += int(img.height / 20) + 4
+
+
+def main():
+    p = argparse.ArgumentParser()
+    p.add_argument("--results", default=os.path.join(os.path.dirname(os.path.dirname(__file__)), "results"))
+    p.add_argument("--out", default=None)
+    args = p.parse_args()
+    out = args.out or os.path.join(args.results, "fedkd_gia_results.xlsx")
+
+    wb = Workbook()
+    wb.remove(wb.active)
+    baseline_sheets(wb, os.path.join(args.results, "baseline", "run"))
+    for exp in sorted(os.listdir(args.results)):
+        files = sorted(glob.glob(os.path.join(args.results, exp, "**", "results.jsonl"), recursive=True))
+        if files:
+            experiment_sheets(wb, exp, files)
+    wb.save(out)
+    print("saved", out, "sheets:", wb.sheetnames)
+
+
+if __name__ == "__main__":
+    main()
