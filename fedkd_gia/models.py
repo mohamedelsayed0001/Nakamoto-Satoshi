@@ -11,9 +11,9 @@ EMBEDDING_KEYS = ("patch_embed", "pos_embed", "cls_token")
 class ViTWithInternals(nn.Module):
     """timm ViT that records every block's output and attention probabilities during forward."""
 
-    def __init__(self, arch, num_classes, pretrained=True):
+    def __init__(self, arch, num_classes, pretrained=True, **kwargs):
         super().__init__()
-        self.vit = timm.create_model(arch, pretrained=pretrained, num_classes=num_classes)
+        self.vit = timm.create_model(arch, pretrained=pretrained, num_classes=num_classes, **kwargs)
         self.num_heads = self.vit.blocks[0].attn.num_heads
         self.embed_dim = self.vit.embed_dim
         self.depth = len(self.vit.blocks)
