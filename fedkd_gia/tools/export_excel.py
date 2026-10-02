@@ -94,21 +94,26 @@ def baseline_sheets(wb, run_dir):
 
 
 def experiment_sheets(wb, name, files):
-    recs = [json.loads(l) for f in files for l in open(f)]
-    recs.sort(key=lambda r: (list(SETTING_NAMES).index(r["setting"]) if r["setting"] in SETTING_NAMES else 9, r["client"]))
-    cfg_path = os.path.join(os.path.dirname(files[0]), "config.json")
-    cfg = json.load(open(cfg_path)) if os.path.exists(cfg_path) else {}
+    recs = [dict(json.loads(l), run=os.path.basename(os.path.dirname(f))) for f in files for l in open(f)]
+    recs.sort(key=lambda r: (r["run"], list(SETTING_NAMES).index(r["setting"]) if r["setting"] in SETTING_NAMES else 9, r["client"]))
+    cfgs = {}
+    for f in files:
+        cp = os.path.join(os.path.dirname(f), "config.json")
+        if os.path.exists(cp):
+            c = json.load(open(cp))
+            cfgs[os.path.basename(os.path.dirname(f))] = {k: c[k] for k in ("iterations", "num_seeds", "lr", "alpha_tv",
+                                                                          "alpha_l2", "alpha_group", "alpha_noise") if k in c}
 
     ws = wb.create_sheet(name[:31])
-    headers = ["Setting", "Client", "Label restoration acc", "PSNR consensus (dB)", "PSNR best seed (dB)",
+    headers = ["Setting", "Client", "Run (config folder)", "Label restoration acc", "PSNR consensus (dB)", "PSNR best seed (dB)",
                "PSNR gray floor (dB)", "Consensus - floor (dB)", "Final grad-match loss (best seed)", "Time (min)"]
     rows = []
     for i, r in enumerate(recs, 2):
-        rows.append([SETTING_NAMES.get(r["setting"], r["setting"]), r["client"], r["label_acc"], r["psnr_consensus"],
-                     r["psnr_best_seed"], r.get("psnr_gray_floor"), f"=D{i}-F{i}" if "psnr_gray_floor" in r else None, min(r["final_grad_loss"]),
-                     r["seconds"] / 60])
-    last = write_table(ws, 1, headers, rows, {3: "0.0%", 4: "0.00", 5: "0.00", 6: "0.00", 7: "0.00", 8: "0.0000",
-                                               9: "0.0"})
+        rows.append([SETTING_NAMES.get(r["setting"], r["setting"]), r["client"], r["run"], r["label_acc"],
+                     r["psnr_consensus"], r["psnr_best_seed"], r.get("psnr_gray_floor"),
+                     f"=E{i}-G{i}" if "psnr_gray_floor" in r else None, min(r["final_grad_loss"]), r["seconds"] / 60])
+    last = write_table(ws, 1, headers, rows, {4: "0.0%", 5: "0.00", 6: "0.00", 7: "0.00", 8: "0.00", 9: "0.0000",
+                                               10: "0.0"})
     ws.column_dimensions["A"].width = 34
     ws.freeze_panes = "A2"
 
@@ -124,9 +129,9 @@ def experiment_sheets(wb, name, files):
         label = SETTING_NAMES[s]
         ws.cell(row=k, column=1, value=label).font = Font(name=FONT)
         ws.cell(row=k, column=2, value=f'=COUNTIF({rng("A")},A{k})')
-        for col_idx, src in zip(range(3, 8), "CDEFG"):
+        for col_idx, src in zip(range(3, 8), "DEFGH"):
             c = ws.cell(row=k, column=col_idx, value=f'=AVERAGEIFS({rng(src)},{rng("A")},A{k})')
-            c.number_format = "0.0%" if src == "C" else "0.00"
+            c.number_format = "0.0%" if src == "D" else "0.00"
             c.font = Font(name=FONT)
 
     note_row = r0 + len(settings) + 2
@@ -136,8 +141,7 @@ def experiment_sheets(wb, name, files):
         "PSNR: images in [0,1], reconstructions matched one-to-one to ground truth (Hungarian), averaged over the batch. "
         "Consensus = pixel mean over seeds; best seed = lowest gradient-matching loss (attacker-selectable).",
         "Gray floor: PSNR of a uniform gray image; a reconstruction below it carries no recoverable pixel information.",
-        f"Attack config: {json.dumps({k: cfg[k] for k in ('iterations', 'num_seeds', 'lr', 'alpha_tv', 'alpha_l2', 'alpha_group', 'alpha_noise') if k in cfg})}",
-    ]
+    ] + [f"Run {k}: {json.dumps(v)}" for k, v in sorted(cfgs.items())]
     for i, t in enumerate(notes):
         ws.cell(row=note_row + i, column=1, value=t).font = Font(name=FONT, italic=True)
 
@@ -151,7 +155,8 @@ def experiment_sheets(wb, name, files):
         for p in pngs:
             stem = os.path.basename(p)[:-4]
             setting, client = stem.split("_", 1)
-            wi.cell(row=row, column=1, value=f"{SETTING_NAMES.get(setting, setting)} - client {client}").font = Font(name=FONT, bold=True)
+            run = os.path.basename(os.path.dirname(p))
+            wi.cell(row=row, column=1, value=f"{SETTING_NAMES.get(setting, setting)} - client {client} - run {run}").font = Font(name=FONT, bold=True)
             w, h = Image.open(p).size
             img = XLImage(p)
             img.width, img.height = 1100, int(1100 * h / w)

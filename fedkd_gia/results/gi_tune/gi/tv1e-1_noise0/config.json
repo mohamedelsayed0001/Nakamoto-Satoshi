@@ -1,0 +1,21 @@
+{
+  "data_root": "/kaggle/input/competitions/state-farm-distracted-driver-detection",
+  "cache_dir": "/tmp/fedkd_cache",
+  "victim_dir": "/kaggle/input/notebooks/mohamedelsayed10/fedkd-gi-victim/victim",
+  "out_dir": "/kaggle/working/gi/tv1e-1_noise0",
+  "clients": "p002",
+  "settings": "none",
+  "iterations": 2000,
+  "num_seeds": 2,
+  "lr": 0.1,
+  "nuisance_lr": 0.001,
+  "warmup": 50,
+  "alpha_grad": 1.0,
+  "alpha_tv": 0.1,
+  "alpha_l2": 1e-06,
+  "alpha_group": 0.01,
+  "alpha_noise": 0.0,
+  "group_start": 0.25,
+  "log_every": 250,
+  "time_budget_hours": 0
+}
