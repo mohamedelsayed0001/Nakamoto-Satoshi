@@ -1,0 +1,563 @@
+[{"stream_name":"stderr","time":1.052622959,"data":"Cloning into '/tmp/repo'...\n"}
+,{"stream_name":"stdout","time":18.871601284,"data":"VRAM 2026/10/02 22:28:00.352, 0, 0 MiB, 15360 MiB, 0 %\n"}
+,{"stream_name":"stdout","time":18.874976093,"data":"VRAM 2026/10/02 22:28:00.356, 1, 0 MiB, 15360 MiB, 0 %\n"}
+,{"stream_name":"stdout","time":138.889347849,"data":"VRAM 2026/10/02 22:30:00.371, 0, 0 MiB, 15360 MiB, 0 %\n"}
+,{"stream_name":"stdout","time":138.891760939,"data":"VRAM 2026/10/02 22:30:00.374, 1, 0 MiB, 15360 MiB, 0 %\n"}
+,{"stream_name":"stdout","time":202.922087629,"data":"data_root: /kaggle/input/competitions/state-farm-distracted-driver-detection | victims: /kaggle/input/datasets/yossfalsayed/fedkd-gi-victim | jobs: [('gpu0', 'p002,p014,p016,p022,p026', ['--settings', 'dinov2', '--iterations', '4000', '--num_seeds', '2', '--alpha_tv', '1', '--alpha_noise', '0', '--log_every', '500', '--time_budget_hours', '11.3']), ('gpu1', 'p012,p015,p021,p024,p035', ['--settings', 'dinov2', '--iterations', '4000', '--num_seeds', '2', '--alpha_tv', '1', '--alpha_noise', '0', '--log_every', '500', '--time_budget_hours', '11.3'])]\n"}
+,{"stream_name":"stdout","time":258.906157111,"data":"VRAM 2026/10/02 22:32:00.388, 0, 0 MiB, 15360 MiB, 0 %\n"}
+,{"stream_name":"stdout","time":258.908110799,"data":"VRAM 2026/10/02 22:32:00.390, 1, 0 MiB, 15360 MiB, 0 %\n"}
+,{"stream_name":"stderr","time":292.103913113,"data":"Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.\n"}
+,{"stream_name":"stderr","time":311.622580605,"data":"Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.\n"}
+,{"stream_name":"stdout","time":319.173036397,"data":"[dinov2] client p002: true labels [0, 1, 2, 3, 4, 6, 8, 9] restored [0, 2, 3, 4, 5, 6, 8, 9]\n"}
+,{"stream_name":"stdout","time":319.328757315,"data":"[dinov2] client p012: true labels [0, 1, 2, 3, 5, 7, 8, 9] restored [0, 1, 2, 4, 5, 6, 8, 9]\n"}
+,{"stream_name":"stdout","time":322.006391559,"data":"    it      0  grad-match [3.57087, 4.02189]\n"}
+,{"stream_name":"stdout","time":322.018131254,"data":"    it      0  grad-match [3.80372, 4.36359]\n"}
+,{"stream_name":"stdout","time":378.921445829,"data":"VRAM 2026/10/02 22:34:00.404, 0, 3323 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":378.923476661,"data":"VRAM 2026/10/02 22:34:00.406, 1, 3323 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":498.937744656,"data":"VRAM 2026/10/02 22:36:00.420, 0, 3323 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":498.93921934,"data":"VRAM 2026/10/02 22:36:00.422, 1, 3323 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":618.954866162,"data":"VRAM 2026/10/02 22:38:00.435, 0, 3323 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":618.95495647,"data":"VRAM 2026/10/02 22:38:00.437, 1, 3323 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":738.968973279,"data":"VRAM 2026/10/02 22:40:00.451, 0, 3323 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":738.970408755,"data":"VRAM 2026/10/02 22:40:00.453, 1, 3323 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":858.983703569,"data":"VRAM 2026/10/02 22:42:00.466, 0, 3323 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":858.985240266,"data":"VRAM 2026/10/02 22:42:00.468, 1, 3323 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":917.180299774,"data":"    it    500  grad-match [0.24274, 0.34552]\n"}
+,{"stream_name":"stdout","time":962.907342846,"data":"    it    500  grad-match [0.29928, 0.26373]\n"}
+,{"stream_name":"stdout","time":979.000952879,"data":"VRAM 2026/10/02 22:44:00.482, 0, 3323 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":979.001548864,"data":"VRAM 2026/10/02 22:44:00.484, 1, 3323 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":1099.014937903,"data":"VRAM 2026/10/02 22:46:00.498, 0, 3323 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":1099.016434989,"data":"VRAM 2026/10/02 22:46:00.499, 1, 3323 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":1219.031414384,"data":"VRAM 2026/10/02 22:48:00.513, 0, 3323 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":1219.033735186,"data":"VRAM 2026/10/02 22:48:00.516, 1, 3323 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":1339.048304648,"data":"VRAM 2026/10/02 22:50:00.530, 0, 3323 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":1339.049937532,"data":"VRAM 2026/10/02 22:50:00.533, 1, 3323 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":1459.065842389,"data":"VRAM 2026/10/02 22:52:00.546, 0, 3323 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":1459.065924939,"data":"VRAM 2026/10/02 22:52:00.548, 1, 3323 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":1516.104877593,"data":"    it   1000  grad-match [0.21763, 0.17264]\n"}
+,{"stream_name":"stdout","time":1579.079616713,"data":"VRAM 2026/10/02 22:54:00.562, 0, 3323 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":1579.081291501,"data":"VRAM 2026/10/02 22:54:00.564, 1, 3323 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":1613.932632408,"data":"    it   1000  grad-match [0.22837, 0.19898]\n"}
+,{"stream_name":"stdout","time":1699.097389969,"data":"VRAM 2026/10/02 22:56:00.578, 0, 3323 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":1699.097666329,"data":"VRAM 2026/10/02 22:56:00.580, 1, 3323 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":1819.112265359,"data":"VRAM 2026/10/02 22:58:00.594, 0, 3323 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":1819.113564263,"data":"VRAM 2026/10/02 22:58:00.596, 1, 3323 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":1939.126947589,"data":"VRAM 2026/10/02 23:00:00.610, 0, 3323 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":1939.128434745,"data":"VRAM 2026/10/02 23:00:00.611, 1, 3323 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":2059.142191182,"data":"VRAM 2026/10/02 23:02:00.625, 0, 3323 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":2059.143872241,"data":"VRAM 2026/10/02 23:02:00.626, 1, 3323 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":2115.985051418,"data":"    it   1500  grad-match [0.16265, 0.14114]\n"}
+,{"stream_name":"stdout","time":2179.15749977,"data":"VRAM 2026/10/02 23:04:00.640, 0, 3323 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":2179.159615554,"data":"VRAM 2026/10/02 23:04:00.642, 1, 3323 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":2265.144598624,"data":"    it   1500  grad-match [0.21854, 0.26984]\n"}
+,{"stream_name":"stdout","time":2299.173457562,"data":"VRAM 2026/10/02 23:06:00.656, 0, 3323 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":2299.175013804,"data":"VRAM 2026/10/02 23:06:00.658, 1, 3323 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":2419.188849274,"data":"VRAM 2026/10/02 23:08:00.671, 0, 3323 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":2419.190462916,"data":"VRAM 2026/10/02 23:08:00.673, 1, 3323 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":2539.204516469,"data":"VRAM 2026/10/02 23:10:00.687, 0, 3323 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":2539.206052493,"data":"VRAM 2026/10/02 23:10:00.689, 1, 3323 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":2659.221054625,"data":"VRAM 2026/10/02 23:12:00.703, 0, 3323 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":2659.222818411,"data":"VRAM 2026/10/02 23:12:00.705, 1, 3323 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":2716.736167556,"data":"    it   2000  grad-match [0.12289, 0.10826]\n"}
+,{"stream_name":"stdout","time":2779.237709137,"data":"VRAM 2026/10/02 23:14:00.719, 0, 3323 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":2779.239500705,"data":"VRAM 2026/10/02 23:14:00.722, 1, 3323 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":2899.253806375,"data":"VRAM 2026/10/02 23:16:00.736, 0, 3323 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":2899.256099144,"data":"VRAM 2026/10/02 23:16:00.738, 1, 3323 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":2917.987495281,"data":"    it   2000  grad-match [0.16138, 0.1704]\n"}
+,{"stream_name":"stdout","time":3019.273465142,"data":"VRAM 2026/10/02 23:18:00.753, 0, 3323 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":3019.273696878,"data":"VRAM 2026/10/02 23:18:00.755, 1, 3323 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":3139.287878835,"data":"VRAM 2026/10/02 23:20:00.770, 0, 3323 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":3139.289428758,"data":"VRAM 2026/10/02 23:20:00.772, 1, 3323 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":3259.303862551,"data":"VRAM 2026/10/02 23:22:00.786, 0, 3323 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":3259.30539257,"data":"VRAM 2026/10/02 23:22:00.788, 1, 3323 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":3320.405462692,"data":"    it   2500  grad-match [0.10469, 0.08757]\n"}
+,{"stream_name":"stdout","time":3379.321674132,"data":"VRAM 2026/10/02 23:24:00.802, 0, 3323 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":3379.321748622,"data":"VRAM 2026/10/02 23:24:00.804, 1, 3323 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":3499.335948209,"data":"VRAM 2026/10/02 23:26:00.818, 0, 3323 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":3499.337320889,"data":"VRAM 2026/10/02 23:26:00.820, 1, 3323 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":3574.757827362,"data":"    it   2500  grad-match [0.13268, 0.16818]\n"}
+,{"stream_name":"stdout","time":3619.350517594,"data":"VRAM 2026/10/02 23:28:00.833, 0, 3323 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":3619.352141538,"data":"VRAM 2026/10/02 23:28:00.835, 1, 3323 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":3739.366405868,"data":"VRAM 2026/10/02 23:30:00.848, 0, 3323 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":3739.368002728,"data":"VRAM 2026/10/02 23:30:00.851, 1, 3323 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":3859.382464848,"data":"VRAM 2026/10/02 23:32:00.864, 0, 3323 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":3859.383977484,"data":"VRAM 2026/10/02 23:32:00.867, 1, 3323 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":3925.507058906,"data":"    it   3000  grad-match [0.07328, 0.0747]\n"}
+,{"stream_name":"stdout","time":3979.401320797,"data":"VRAM 2026/10/02 23:34:00.881, 0, 3323 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":3979.401547916,"data":"VRAM 2026/10/02 23:34:00.884, 1, 3323 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":4099.415889405,"data":"VRAM 2026/10/02 23:36:00.898, 0, 3323 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":4099.41748132,"data":"VRAM 2026/10/02 23:36:00.900, 1, 3323 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":4219.431815931,"data":"VRAM 2026/10/02 23:38:00.914, 0, 3323 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":4219.433679058,"data":"VRAM 2026/10/02 23:38:00.916, 1, 3323 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":4229.754801428,"data":"    it   3000  grad-match [0.07943, 0.13127]\n"}
+,{"stream_name":"stdout","time":4339.447899236,"data":"VRAM 2026/10/02 23:40:00.930, 0, 3323 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":4339.449502434,"data":"VRAM 2026/10/02 23:40:00.932, 1, 3323 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":4459.462995126,"data":"VRAM 2026/10/02 23:42:00.946, 0, 3323 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":4459.464764374,"data":"VRAM 2026/10/02 23:42:00.947, 1, 3323 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":4528.331404,"data":"    it   3500  grad-match [0.06934, 0.06888]\n"}
+,{"stream_name":"stdout","time":4579.479554545,"data":"VRAM 2026/10/02 23:44:00.962, 0, 3323 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":4579.481592106,"data":"VRAM 2026/10/02 23:44:00.964, 1, 3323 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":4699.496105014,"data":"VRAM 2026/10/02 23:46:00.978, 0, 3323 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":4699.497793037,"data":"VRAM 2026/10/02 23:46:00.980, 1, 3323 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":4819.511275026,"data":"VRAM 2026/10/02 23:48:00.994, 0, 3323 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":4819.512734259,"data":"VRAM 2026/10/02 23:48:00.996, 1, 3323 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":4882.770766407,"data":"    it   3500  grad-match [0.06051, 0.08543]\n"}
+,{"stream_name":"stdout","time":4939.529080614,"data":"VRAM 2026/10/02 23:50:01.009, 0, 3323 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":4939.529189254,"data":"VRAM 2026/10/02 23:50:01.011, 1, 3323 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":5059.542862661,"data":"VRAM 2026/10/02 23:52:01.025, 0, 3323 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":5059.544311165,"data":"VRAM 2026/10/02 23:52:01.027, 1, 3323 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":5130.579208969,"data":"    it   3999  grad-match [0.06877, 0.06798]\n"}
+,{"stream_name":"stdout","time":5131.153611422,"data":"RESULT [dinov2] client p002: PSNR consensus 10.72 dB | best seed 10.52 dB | gray floor 9.45 dB | label acc 0.88 | 80.2 min\n"}
+,{"stream_name":"stdout","time":5132.693047203,"data":"[dinov2] client p014: true labels [0, 1, 2, 4, 5, 6, 7, 9] restored [0, 1, 2, 5, 6, 7, 8, 9]\n"}
+,{"stream_name":"stdout","time":5134.00965537,"data":"    it      0  grad-match [31.64498, 33.47546]\n"}
+,{"stream_name":"stdout","time":5179.558656907,"data":"VRAM 2026/10/02 23:54:01.041, 0, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":5179.561457857,"data":"VRAM 2026/10/02 23:54:01.043, 1, 3323 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":5299.575186003,"data":"VRAM 2026/10/02 23:56:01.058, 0, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":5299.57695503,"data":"VRAM 2026/10/02 23:56:01.060, 1, 3323 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":5419.590776248,"data":"VRAM 2026/10/02 23:58:01.073, 0, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":5419.59257316,"data":"VRAM 2026/10/02 23:58:01.075, 1, 3323 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":5537.823396784,"data":"    it   3999  grad-match [0.0585, 0.08222]\n"}
+,{"stream_name":"stdout","time":5538.399135139,"data":"RESULT [dinov2] client p012: PSNR consensus 11.82 dB | best seed 11.46 dB | gray floor 10.03 dB | label acc 0.75 | 87.0 min\n"}
+,{"stream_name":"stdout","time":5539.606716593,"data":"VRAM 2026/10/03 00:00:01.089, 0, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":5539.608061905,"data":"VRAM 2026/10/03 00:00:01.091, 1, 3323 MiB, 15360 MiB, 1 %\n"}
+,{"stream_name":"stdout","time":5539.729496874,"data":"[dinov2] client p015: true labels [0, 1, 2, 4, 5, 6, 7, 8] restored [0, 2, 4, 5, 6, 7, 8, 9]\n"}
+,{"stream_name":"stdout","time":5541.128597219,"data":"    it      0  grad-match [2.05926, 2.05957]\n"}
+,{"stream_name":"stdout","time":5659.621443173,"data":"VRAM 2026/10/03 00:02:01.104, 0, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":5659.623321135,"data":"VRAM 2026/10/03 00:02:01.106, 1, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":5734.574223708,"data":"    it    500  grad-match [0.14197, 0.19751]\n"}
+,{"stream_name":"stdout","time":5779.637283205,"data":"VRAM 2026/10/03 00:04:01.119, 0, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":5779.638747424,"data":"VRAM 2026/10/03 00:04:01.122, 1, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":5899.652800224,"data":"VRAM 2026/10/03 00:06:01.135, 0, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":5899.654420745,"data":"VRAM 2026/10/03 00:06:01.137, 1, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":6019.670906319,"data":"VRAM 2026/10/03 00:08:01.151, 0, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":6019.671297474,"data":"VRAM 2026/10/03 00:08:01.152, 1, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":6139.68550141,"data":"VRAM 2026/10/03 00:10:01.168, 0, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":6139.687070453,"data":"VRAM 2026/10/03 00:10:01.170, 1, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":6194.440913602,"data":"    it    500  grad-match [0.35441, 0.41322]\n"}
+,{"stream_name":"stdout","time":6259.700252032,"data":"VRAM 2026/10/03 00:12:01.183, 0, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":6259.701685117,"data":"VRAM 2026/10/03 00:12:01.185, 1, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":6335.956639062,"data":"    it   1000  grad-match [0.12505, 0.15426]\n"}
+,{"stream_name":"stdout","time":6379.715124539,"data":"VRAM 2026/10/03 00:14:01.198, 0, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":6379.716727467,"data":"VRAM 2026/10/03 00:14:01.199, 1, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":6499.730301907,"data":"VRAM 2026/10/03 00:16:01.213, 0, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":6499.731916401,"data":"VRAM 2026/10/03 00:16:01.215, 1, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":6619.747557905,"data":"VRAM 2026/10/03 00:18:01.228, 0, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":6619.7476948,"data":"VRAM 2026/10/03 00:18:01.230, 1, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":6739.761569374,"data":"VRAM 2026/10/03 00:20:01.244, 0, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":6739.763544501,"data":"VRAM 2026/10/03 00:20:01.246, 1, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":6849.413441796,"data":"    it   1000  grad-match [0.25166, 0.26261]\n"}
+,{"stream_name":"stdout","time":6859.7773197,"data":"VRAM 2026/10/03 00:22:01.260, 0, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":6859.778900997,"data":"VRAM 2026/10/03 00:22:01.262, 1, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":6937.671269475,"data":"    it   1500  grad-match [0.10771, 0.13214]\n"}
+,{"stream_name":"stdout","time":6979.793418587,"data":"VRAM 2026/10/03 00:24:01.275, 0, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":6979.795161018,"data":"VRAM 2026/10/03 00:24:01.278, 1, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":7099.808763731,"data":"VRAM 2026/10/03 00:26:01.291, 0, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":7099.810268822,"data":"VRAM 2026/10/03 00:26:01.293, 1, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":7219.823347645,"data":"VRAM 2026/10/03 00:28:01.306, 0, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":7219.825302494,"data":"VRAM 2026/10/03 00:28:01.308, 1, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":7339.838903747,"data":"VRAM 2026/10/03 00:30:01.321, 0, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":7339.840309595,"data":"VRAM 2026/10/03 00:30:01.323, 1, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":7459.854077106,"data":"VRAM 2026/10/03 00:32:01.336, 0, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":7459.855821469,"data":"VRAM 2026/10/03 00:32:01.338, 1, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":7504.517747986,"data":"    it   1500  grad-match [0.22932, 0.4313]\n"}
+,{"stream_name":"stdout","time":7539.739658055,"data":"    it   2000  grad-match [0.09977, 0.09074]\n"}
+,{"stream_name":"stdout","time":7579.871784697,"data":"VRAM 2026/10/03 00:34:01.353, 0, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":7579.871957304,"data":"VRAM 2026/10/03 00:34:01.354, 1, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":7699.885860658,"data":"VRAM 2026/10/03 00:36:01.368, 0, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":7699.887570244,"data":"VRAM 2026/10/03 00:36:01.370, 1, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":7819.903491645,"data":"VRAM 2026/10/03 00:38:01.384, 0, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":7819.903802487,"data":"VRAM 2026/10/03 00:38:01.386, 1, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":7939.918718185,"data":"VRAM 2026/10/03 00:40:01.400, 0, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":7939.920494808,"data":"VRAM 2026/10/03 00:40:01.403, 1, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":8059.93456859,"data":"VRAM 2026/10/03 00:42:01.417, 0, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":8059.936312746,"data":"VRAM 2026/10/03 00:42:01.419, 1, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":8144.088969399,"data":"    it   2500  grad-match [0.09244, 0.08066]\n"}
+,{"stream_name":"stdout","time":8162.186210345,"data":"    it   2000  grad-match [0.33675, 0.37471]\n"}
+,{"stream_name":"stdout","time":8179.950216338,"data":"VRAM 2026/10/03 00:44:01.433, 0, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":8179.951609437,"data":"VRAM 2026/10/03 00:44:01.434, 1, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":8299.964957311,"data":"VRAM 2026/10/03 00:46:01.448, 0, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":8299.966654449,"data":"VRAM 2026/10/03 00:46:01.449, 1, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":8419.980370039,"data":"VRAM 2026/10/03 00:48:01.463, 0, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":8419.982182391,"data":"VRAM 2026/10/03 00:48:01.465, 1, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":8539.996413129,"data":"VRAM 2026/10/03 00:50:01.479, 0, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":8539.99871939,"data":"VRAM 2026/10/03 00:50:01.481, 1, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":8660.013761059,"data":"VRAM 2026/10/03 00:52:01.495, 0, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":8660.015264198,"data":"VRAM 2026/10/03 00:52:01.498, 1, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":8745.927498211,"data":"    it   3000  grad-match [0.08941, 0.07517]\n"}
+,{"stream_name":"stdout","time":8780.029002664,"data":"VRAM 2026/10/03 00:54:01.512, 0, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":8780.030850794,"data":"VRAM 2026/10/03 00:54:01.513, 1, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":8817.523659088,"data":"    it   2500  grad-match [0.18598, 0.22328]\n"}
+,{"stream_name":"stdout","time":8900.045221583,"data":"VRAM 2026/10/03 00:56:01.528, 0, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":8900.046915183,"data":"VRAM 2026/10/03 00:56:01.529, 1, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":9020.061266338,"data":"VRAM 2026/10/03 00:58:01.544, 0, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":9020.062735381,"data":"VRAM 2026/10/03 00:58:01.546, 1, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":9140.078799825,"data":"VRAM 2026/10/03 01:00:01.559, 0, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":9140.078850541,"data":"VRAM 2026/10/03 01:00:01.561, 1, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":9260.093067232,"data":"VRAM 2026/10/03 01:02:01.576, 0, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":9260.094919243,"data":"VRAM 2026/10/03 01:02:01.577, 1, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":9346.570665031,"data":"    it   3500  grad-match [0.08779, 0.07231]\n"}
+,{"stream_name":"stdout","time":9380.108606508,"data":"VRAM 2026/10/03 01:04:01.591, 0, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":9380.110505676,"data":"VRAM 2026/10/03 01:04:01.593, 1, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":9470.313835864,"data":"    it   3000  grad-match [0.12159, 0.16386]\n"}
+,{"stream_name":"stdout","time":9500.124518485,"data":"VRAM 2026/10/03 01:06:01.607, 0, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":9500.126442965,"data":"VRAM 2026/10/03 01:06:01.609, 1, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":9620.140387197,"data":"VRAM 2026/10/03 01:08:01.623, 0, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":9620.142998645,"data":"VRAM 2026/10/03 01:08:01.625, 1, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":9740.157171277,"data":"VRAM 2026/10/03 01:10:01.640, 0, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":9740.158961635,"data":"VRAM 2026/10/03 01:10:01.641, 1, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":9860.172954651,"data":"VRAM 2026/10/03 01:12:01.655, 0, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":9860.174911624,"data":"VRAM 2026/10/03 01:12:01.657, 1, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":9944.091595915,"data":"    it   3999  grad-match [0.08752, 0.0719]\n"}
+,{"stream_name":"stdout","time":9944.641274474,"data":"RESULT [dinov2] client p014: PSNR consensus 10.06 dB | best seed 9.96 dB | gray floor 10.08 dB | label acc 0.88 | 80.2 min\n"}
+,{"stream_name":"stdout","time":9946.750912811,"data":"[dinov2] client p016: true labels [0, 2, 3, 4, 5, 6, 7, 8] restored [0, 1, 4, 5, 6, 7, 8, 9]\n"}
+,{"stream_name":"stdout","time":9948.056818464,"data":"    it      0  grad-match [55.95467, 59.50992]\n"}
+,{"stream_name":"stdout","time":9980.189478377,"data":"VRAM 2026/10/03 01:14:01.671, 0, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":9980.190999135,"data":"VRAM 2026/10/03 01:14:01.674, 1, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":10100.204500626,"data":"VRAM 2026/10/03 01:16:01.687, 0, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":10100.206153773,"data":"VRAM 2026/10/03 01:16:01.689, 1, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":10122.994973635,"data":"    it   3500  grad-match [0.08675, 0.08933]\n"}
+,{"stream_name":"stdout","time":10220.221157622,"data":"VRAM 2026/10/03 01:18:01.702, 0, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":10220.223740798,"data":"VRAM 2026/10/03 01:18:01.705, 1, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":10340.237780226,"data":"VRAM 2026/10/03 01:20:01.720, 0, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":10340.239378156,"data":"VRAM 2026/10/03 01:20:01.722, 1, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":10460.253284227,"data":"VRAM 2026/10/03 01:22:01.736, 0, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":10460.2547651,"data":"VRAM 2026/10/03 01:22:01.738, 1, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":10549.302631281,"data":"    it    500  grad-match [0.16815, 0.30654]\n"}
+,{"stream_name":"stdout","time":10580.270253739,"data":"VRAM 2026/10/03 01:24:01.752, 0, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":10580.271791055,"data":"VRAM 2026/10/03 01:24:01.754, 1, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":10700.285793874,"data":"VRAM 2026/10/03 01:26:01.768, 0, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":10700.287825049,"data":"VRAM 2026/10/03 01:26:01.770, 1, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":10775.567637936,"data":"    it   3999  grad-match [0.08459, 0.0851]\n"}
+,{"stream_name":"stdout","time":10776.174164398,"data":"RESULT [dinov2] client p015: PSNR consensus 10.92 dB | best seed 10.58 dB | gray floor 9.91 dB | label acc 0.88 | 87.3 min\n"}
+,{"stream_name":"stdout","time":10777.447358671,"data":"[dinov2] client p021: true labels [0, 2, 3, 4, 5, 6, 7, 9] restored [0, 2, 3, 4, 6, 7, 8, 9]\n"}
+,{"stream_name":"stdout","time":10778.862519358,"data":"    it      0  grad-match [228.67754, 236.46678]\n"}
+,{"stream_name":"stdout","time":10820.301727307,"data":"VRAM 2026/10/03 01:28:01.784, 0, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":10820.303552359,"data":"VRAM 2026/10/03 01:28:01.786, 1, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":10940.318676874,"data":"VRAM 2026/10/03 01:30:01.800, 0, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":10940.319090746,"data":"VRAM 2026/10/03 01:30:01.801, 1, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":11060.333062446,"data":"VRAM 2026/10/03 01:32:01.815, 0, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":11060.334594364,"data":"VRAM 2026/10/03 01:32:01.817, 1, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":11150.511771839,"data":"    it   1000  grad-match [0.16963, 0.12898]\n"}
+,{"stream_name":"stdout","time":11180.350464433,"data":"VRAM 2026/10/03 01:34:01.831, 0, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":11180.35052326,"data":"VRAM 2026/10/03 01:34:01.833, 1, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":11300.36426145,"data":"VRAM 2026/10/03 01:36:01.847, 0, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":11300.365624806,"data":"VRAM 2026/10/03 01:36:01.848, 1, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":11420.379719512,"data":"VRAM 2026/10/03 01:38:01.862, 0, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":11420.382267448,"data":"VRAM 2026/10/03 01:38:01.864, 1, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":11431.116222211,"data":"    it    500  grad-match [0.42678, 0.59305]\n"}
+,{"stream_name":"stdout","time":11540.395554102,"data":"VRAM 2026/10/03 01:40:01.878, 0, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":11540.397424862,"data":"VRAM 2026/10/03 01:40:01.880, 1, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":11660.411815067,"data":"VRAM 2026/10/03 01:42:01.894, 0, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":11660.413262479,"data":"VRAM 2026/10/03 01:42:01.896, 1, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":11751.624222435,"data":"    it   1500  grad-match [0.12537, 0.10156]\n"}
+,{"stream_name":"stdout","time":11780.427878418,"data":"VRAM 2026/10/03 01:44:01.910, 0, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":11780.430029837,"data":"VRAM 2026/10/03 01:44:01.912, 1, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":11900.444059212,"data":"VRAM 2026/10/03 01:46:01.927, 0, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":11900.445674847,"data":"VRAM 2026/10/03 01:46:01.928, 1, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":12020.461216675,"data":"VRAM 2026/10/03 01:48:01.942, 0, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":12020.461697644,"data":"VRAM 2026/10/03 01:48:01.944, 1, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":12085.329221709,"data":"    it   1000  grad-match [0.24655, 0.35433]\n"}
+,{"stream_name":"stdout","time":12140.47787362,"data":"VRAM 2026/10/03 01:50:01.958, 0, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":12140.477929739,"data":"VRAM 2026/10/03 01:50:01.961, 1, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":12260.492252927,"data":"VRAM 2026/10/03 01:52:01.974, 0, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":12260.493391384,"data":"VRAM 2026/10/03 01:52:01.976, 1, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":12354.279349088,"data":"    it   2000  grad-match [0.10087, 0.08295]\n"}
+,{"stream_name":"stdout","time":12380.510424598,"data":"VRAM 2026/10/03 01:54:01.990, 0, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":12380.510769411,"data":"VRAM 2026/10/03 01:54:01.993, 1, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":12500.526228251,"data":"VRAM 2026/10/03 01:56:02.008, 0, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":12500.528750358,"data":"VRAM 2026/10/03 01:56:02.010, 1, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":12620.54315013,"data":"VRAM 2026/10/03 01:58:02.026, 0, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":12620.54473629,"data":"VRAM 2026/10/03 01:58:02.027, 1, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":12740.503763194,"data":"    it   1500  grad-match [0.19508, 0.2694]\n"}
+,{"stream_name":"stdout","time":12740.558429992,"data":"VRAM 2026/10/03 02:00:02.041, 0, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":12740.560082232,"data":"VRAM 2026/10/03 02:00:02.043, 1, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":12860.573629476,"data":"VRAM 2026/10/03 02:02:02.056, 0, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":12860.575318588,"data":"VRAM 2026/10/03 02:02:02.058, 1, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":12957.316972466,"data":"    it   2500  grad-match [0.08554, 0.07261]\n"}
+,{"stream_name":"stdout","time":12980.591042267,"data":"VRAM 2026/10/03 02:04:02.072, 0, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":12980.59110202,"data":"VRAM 2026/10/03 02:04:02.074, 1, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":13100.606503963,"data":"VRAM 2026/10/03 02:06:02.087, 0, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":13100.606831481,"data":"VRAM 2026/10/03 02:06:02.089, 1, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":13220.6212446,"data":"VRAM 2026/10/03 02:08:02.103, 0, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":13220.622404566,"data":"VRAM 2026/10/03 02:08:02.105, 1, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":13340.636209956,"data":"VRAM 2026/10/03 02:10:02.119, 0, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":13340.637844298,"data":"VRAM 2026/10/03 02:10:02.121, 1, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":13395.667522367,"data":"    it   2000  grad-match [0.17967, 0.22889]\n"}
+,{"stream_name":"stdout","time":13460.652797313,"data":"VRAM 2026/10/03 02:12:02.135, 0, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":13460.654791017,"data":"VRAM 2026/10/03 02:12:02.137, 1, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":13559.767726304,"data":"    it   3000  grad-match [0.07304, 0.06426]\n"}
+,{"stream_name":"stdout","time":13580.669088944,"data":"VRAM 2026/10/03 02:14:02.152, 0, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":13580.670964478,"data":"VRAM 2026/10/03 02:14:02.153, 1, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":13700.684590903,"data":"VRAM 2026/10/03 02:16:02.167, 0, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":13700.68597712,"data":"VRAM 2026/10/03 02:16:02.169, 1, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":13820.700205895,"data":"VRAM 2026/10/03 02:18:02.183, 0, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":13820.701698436,"data":"VRAM 2026/10/03 02:18:02.184, 1, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":13940.715099189,"data":"VRAM 2026/10/03 02:20:02.198, 0, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":13940.716506391,"data":"VRAM 2026/10/03 02:20:02.199, 1, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":14049.256821983,"data":"    it   2500  grad-match [0.15684, 0.20776]\n"}
+,{"stream_name":"stdout","time":14060.732549558,"data":"VRAM 2026/10/03 02:22:02.213, 0, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":14060.732619627,"data":"VRAM 2026/10/03 02:22:02.215, 1, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":14161.240492539,"data":"    it   3500  grad-match [0.06509, 0.06133]\n"}
+,{"stream_name":"stdout","time":14180.747277574,"data":"VRAM 2026/10/03 02:24:02.228, 0, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":14180.747622638,"data":"VRAM 2026/10/03 02:24:02.230, 1, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":14300.763315998,"data":"VRAM 2026/10/03 02:26:02.244, 0, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":14300.763638502,"data":"VRAM 2026/10/03 02:26:02.245, 1, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":14420.777318792,"data":"VRAM 2026/10/03 02:28:02.260, 0, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":14420.779447958,"data":"VRAM 2026/10/03 02:28:02.262, 1, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":14540.793801091,"data":"VRAM 2026/10/03 02:30:02.276, 0, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":14540.795533763,"data":"VRAM 2026/10/03 02:30:02.278, 1, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":14660.810260511,"data":"VRAM 2026/10/03 02:32:02.293, 0, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":14660.811784583,"data":"VRAM 2026/10/03 02:32:02.294, 1, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":14702.216288262,"data":"    it   3000  grad-match [0.14478, 0.19666]\n"}
+,{"stream_name":"stdout","time":14761.464710055,"data":"    it   3999  grad-match [0.06412, 0.06064]\n"}
+,{"stream_name":"stdout","time":14761.997526954,"data":"RESULT [dinov2] client p016: PSNR consensus 9.73 dB | best seed 9.54 dB | gray floor 9.83 dB | label acc 0.75 | 80.3 min\n"}
+,{"stream_name":"stdout","time":14763.202401952,"data":"[dinov2] client p022: true labels [1, 2, 3, 4, 5, 6, 7, 8] restored [0, 1, 2, 4, 6, 7, 8, 9]\n"}
+,{"stream_name":"stdout","time":14764.480100526,"data":"    it      0  grad-match [2.38919, 2.45]\n"}
+,{"stream_name":"stdout","time":14780.826104458,"data":"VRAM 2026/10/03 02:34:02.308, 0, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":14780.827767656,"data":"VRAM 2026/10/03 02:34:02.310, 1, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":14900.842996765,"data":"VRAM 2026/10/03 02:36:02.324, 0, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":14900.84327566,"data":"VRAM 2026/10/03 02:36:02.326, 1, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":15020.857633473,"data":"VRAM 2026/10/03 02:38:02.340, 0, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":15020.859217216,"data":"VRAM 2026/10/03 02:38:02.342, 1, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":15140.872758698,"data":"VRAM 2026/10/03 02:40:02.355, 0, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":15140.874727664,"data":"VRAM 2026/10/03 02:40:02.357, 1, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":15260.88832774,"data":"VRAM 2026/10/03 02:42:02.371, 0, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":15260.890108684,"data":"VRAM 2026/10/03 02:42:02.373, 1, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":15356.349775534,"data":"    it   3500  grad-match [0.1404, 0.19195]\n"}
+,{"stream_name":"stdout","time":15365.252942145,"data":"    it    500  grad-match [0.23597, 0.26201]\n"}
+,{"stream_name":"stdout","time":15380.904507243,"data":"VRAM 2026/10/03 02:44:02.387, 0, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":15380.90656986,"data":"VRAM 2026/10/03 02:44:02.389, 1, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":15500.921179191,"data":"VRAM 2026/10/03 02:46:02.403, 0, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":15500.922549264,"data":"VRAM 2026/10/03 02:46:02.405, 1, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":15620.936631041,"data":"VRAM 2026/10/03 02:48:02.419, 0, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":15620.939276617,"data":"VRAM 2026/10/03 02:48:02.421, 1, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":15740.952966307,"data":"VRAM 2026/10/03 02:50:02.436, 0, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":15740.955265235,"data":"VRAM 2026/10/03 02:50:02.437, 1, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":15860.970803395,"data":"VRAM 2026/10/03 02:52:02.452, 0, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":15860.971456725,"data":"VRAM 2026/10/03 02:52:02.453, 1, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":15965.231400538,"data":"    it   1000  grad-match [0.30323, 0.36758]\n"}
+,{"stream_name":"stdout","time":15980.98649351,"data":"VRAM 2026/10/03 02:54:02.467, 0, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":15980.986741065,"data":"VRAM 2026/10/03 02:54:02.469, 1, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":16007.200919043,"data":"    it   3999  grad-match [0.13971, 0.19114]\n"}
+,{"stream_name":"stdout","time":16007.795648117,"data":"RESULT [dinov2] client p021: PSNR consensus 8.85 dB | best seed 8.46 dB | gray floor 9.48 dB | label acc 0.88 | 87.2 min\n"}
+,{"stream_name":"stdout","time":16009.833076872,"data":"[dinov2] client p024: true labels [2, 3, 4, 5, 6, 7, 8, 9] restored [0, 2, 3, 5, 6, 7, 8, 9]\n"}
+,{"stream_name":"stdout","time":16011.226946226,"data":"    it      0  grad-match [5.33402, 5.53433]\n"}
+,{"stream_name":"stdout","time":16101.000564653,"data":"VRAM 2026/10/03 02:56:02.483, 0, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":16101.002133565,"data":"VRAM 2026/10/03 02:56:02.485, 1, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":16221.0172262,"data":"VRAM 2026/10/03 02:58:02.498, 0, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":16221.017395176,"data":"VRAM 2026/10/03 02:58:02.500, 1, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":16341.030941084,"data":"VRAM 2026/10/03 03:00:02.513, 0, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":16341.032666075,"data":"VRAM 2026/10/03 03:00:02.515, 1, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":16461.047417014,"data":"VRAM 2026/10/03 03:02:02.529, 0, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":16461.047818152,"data":"VRAM 2026/10/03 03:02:02.530, 1, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":16566.126941561,"data":"    it   1500  grad-match [0.18013, 0.17133]\n"}
+,{"stream_name":"stdout","time":16581.061680206,"data":"VRAM 2026/10/03 03:04:02.544, 0, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":16581.063390249,"data":"VRAM 2026/10/03 03:04:02.546, 1, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":16662.586852546,"data":"    it    500  grad-match [0.52978, 0.46683]\n"}
+,{"stream_name":"stdout","time":16701.0769313,"data":"VRAM 2026/10/03 03:06:02.559, 0, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":16701.07846421,"data":"VRAM 2026/10/03 03:06:02.561, 1, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":16821.092528834,"data":"VRAM 2026/10/03 03:08:02.575, 0, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":16821.094166532,"data":"VRAM 2026/10/03 03:08:02.577, 1, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":16941.108290008,"data":"VRAM 2026/10/03 03:10:02.591, 0, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":16941.109999316,"data":"VRAM 2026/10/03 03:10:02.593, 1, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":17061.126352581,"data":"VRAM 2026/10/03 03:12:02.607, 0, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":17061.126777569,"data":"VRAM 2026/10/03 03:12:02.610, 1, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":17165.082000619,"data":"    it   2000  grad-match [0.14341, 0.11048]\n"}
+,{"stream_name":"stdout","time":17181.140896646,"data":"VRAM 2026/10/03 03:14:02.623, 0, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":17181.142626354,"data":"VRAM 2026/10/03 03:14:02.625, 1, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":17301.156784332,"data":"VRAM 2026/10/03 03:16:02.639, 0, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":17301.158153714,"data":"VRAM 2026/10/03 03:16:02.641, 1, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":17313.200756895,"data":"    it   1000  grad-match [0.38355, 0.41694]\n"}
+,{"stream_name":"stdout","time":17421.171631331,"data":"VRAM 2026/10/03 03:18:02.654, 0, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":17421.173323022,"data":"VRAM 2026/10/03 03:18:02.656, 1, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":17541.187051031,"data":"VRAM 2026/10/03 03:20:02.670, 0, 3371 MiB, 15360 MiB, 99 %\n"}
+,{"stream_name":"stdout","time":17541.1894148,"data":"VRAM 2026/10/03 03:20:02.671, 1, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":17661.203492249,"data":"VRAM 2026/10/03 03:22:02.686, 0, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":17661.205075028,"data":"VRAM 2026/10/03 03:22:02.688, 1, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":17764.756661199,"data":"    it   2500  grad-match [0.18914, 0.11128]\n"}
+,{"stream_name":"stdout","time":17781.221518054,"data":"VRAM 2026/10/03 03:24:02.702, 0, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":17781.222207091,"data":"VRAM 2026/10/03 03:24:02.703, 1, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":17901.236231299,"data":"VRAM 2026/10/03 03:26:02.719, 0, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":17901.237970318,"data":"VRAM 2026/10/03 03:26:02.721, 1, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":17965.417695324,"data":"    it   1500  grad-match [0.44395, 0.30259]\n"}
+,{"stream_name":"stdout","time":18021.253240195,"data":"VRAM 2026/10/03 03:28:02.735, 0, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":18021.254432281,"data":"VRAM 2026/10/03 03:28:02.737, 1, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":18141.270252027,"data":"VRAM 2026/10/03 03:30:02.752, 0, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":18141.272203345,"data":"VRAM 2026/10/03 03:30:02.754, 1, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":18261.286237928,"data":"VRAM 2026/10/03 03:32:02.769, 0, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":18261.288581346,"data":"VRAM 2026/10/03 03:32:02.770, 1, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":18365.984710431,"data":"    it   3000  grad-match [0.11998, 0.17121]\n"}
+,{"stream_name":"stdout","time":18381.303355206,"data":"VRAM 2026/10/03 03:34:02.785, 0, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":18381.303753469,"data":"VRAM 2026/10/03 03:34:02.786, 1, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":18501.318186525,"data":"VRAM 2026/10/03 03:36:02.801, 0, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":18501.31973336,"data":"VRAM 2026/10/03 03:36:02.803, 1, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":18620.021679385,"data":"    it   2000  grad-match [0.24102, 0.21544]\n"}
+,{"stream_name":"stdout","time":18621.334797795,"data":"VRAM 2026/10/03 03:38:02.817, 0, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":18621.336777964,"data":"VRAM 2026/10/03 03:38:02.819, 1, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":18741.354428294,"data":"VRAM 2026/10/03 03:40:02.833, 0, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":18741.355440992,"data":"VRAM 2026/10/03 03:40:02.836, 1, 3371 MiB, 15360 MiB, 99 %\n"}
+,{"stream_name":"stdout","time":18861.369605243,"data":"VRAM 2026/10/03 03:42:02.852, 0, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":18861.370938233,"data":"VRAM 2026/10/03 03:42:02.854, 1, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":18969.061086268,"data":"    it   3500  grad-match [0.05433, 0.06106]\n"}
+,{"stream_name":"stdout","time":18981.385885366,"data":"VRAM 2026/10/03 03:44:02.867, 0, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":18981.387725239,"data":"VRAM 2026/10/03 03:44:02.870, 1, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":19101.402378347,"data":"VRAM 2026/10/03 03:46:02.884, 0, 3371 MiB, 15360 MiB, 99 %\n"}
+,{"stream_name":"stdout","time":19101.403980299,"data":"VRAM 2026/10/03 03:46:02.886, 1, 3371 MiB, 15360 MiB, 99 %\n"}
+,{"stream_name":"stdout","time":19221.417725371,"data":"VRAM 2026/10/03 03:48:02.900, 0, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":19221.419648246,"data":"VRAM 2026/10/03 03:48:02.902, 1, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":19275.500258129,"data":"    it   2500  grad-match [0.14299, 0.20032]\n"}
+,{"stream_name":"stdout","time":19341.433051994,"data":"VRAM 2026/10/03 03:50:02.916, 0, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":19341.43554834,"data":"VRAM 2026/10/03 03:50:02.917, 1, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":19461.449025527,"data":"VRAM 2026/10/03 03:52:02.932, 0, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":19461.451635208,"data":"VRAM 2026/10/03 03:52:02.933, 1, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":19570.746250652,"data":"    it   3999  grad-match [0.05227, 0.05217]\n"}
+,{"stream_name":"stdout","time":19571.325970529,"data":"RESULT [dinov2] client p022: PSNR consensus 9.42 dB | best seed 9.17 dB | gray floor 9.03 dB | label acc 0.75 | 80.2 min\n"}
+,{"stream_name":"stdout","time":19572.916962325,"data":"[dinov2] client p026: true labels [1, 2, 4, 5, 6, 7, 8, 9] restored [0, 2, 3, 4, 5, 7, 8, 9]\n"}
+,{"stream_name":"stdout","time":19574.238555044,"data":"    it      0  grad-match [2.70468, 2.8079]\n"}
+,{"stream_name":"stdout","time":19581.467818713,"data":"VRAM 2026/10/03 03:54:02.948, 0, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":19581.468095105,"data":"VRAM 2026/10/03 03:54:02.950, 1, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":19701.481665659,"data":"VRAM 2026/10/03 03:56:02.964, 0, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":19701.483562542,"data":"VRAM 2026/10/03 03:56:02.966, 1, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":19821.497819123,"data":"VRAM 2026/10/03 03:58:02.980, 0, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":19821.499259464,"data":"VRAM 2026/10/03 03:58:02.982, 1, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":19927.864283437,"data":"    it   3000  grad-match [0.29437, 0.13537]\n"}
+,{"stream_name":"stdout","time":19941.513521143,"data":"VRAM 2026/10/03 04:00:02.996, 0, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":19941.515133382,"data":"VRAM 2026/10/03 04:00:02.998, 1, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":20061.529226528,"data":"VRAM 2026/10/03 04:02:03.011, 0, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":20061.530585685,"data":"VRAM 2026/10/03 04:02:03.013, 1, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":20173.403402046,"data":"    it    500  grad-match [0.36678, 0.32711]\n"}
+,{"stream_name":"stdout","time":20181.543916617,"data":"VRAM 2026/10/03 04:04:03.027, 0, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":20181.545719192,"data":"VRAM 2026/10/03 04:04:03.028, 1, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":20301.559570106,"data":"VRAM 2026/10/03 04:06:03.042, 0, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":20301.561686748,"data":"VRAM 2026/10/03 04:06:03.044, 1, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":20421.576578487,"data":"VRAM 2026/10/03 04:08:03.058, 0, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":20421.577380426,"data":"VRAM 2026/10/03 04:08:03.060, 1, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":20541.591303442,"data":"VRAM 2026/10/03 04:10:03.073, 0, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":20541.592882402,"data":"VRAM 2026/10/03 04:10:03.076, 1, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":20578.097650902,"data":"    it   3500  grad-match [0.11187, 0.11985]\n"}
+,{"stream_name":"stdout","time":20661.608479526,"data":"VRAM 2026/10/03 04:12:03.090, 0, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":20661.610235968,"data":"VRAM 2026/10/03 04:12:03.093, 1, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":20771.956808013,"data":"    it   1000  grad-match [0.23326, 0.26548]\n"}
+,{"stream_name":"stdout","time":20781.623750328,"data":"VRAM 2026/10/03 04:14:03.106, 0, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":20781.625069031,"data":"VRAM 2026/10/03 04:14:03.108, 1, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":20901.638448979,"data":"VRAM 2026/10/03 04:16:03.121, 0, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":20901.640599963,"data":"VRAM 2026/10/03 04:16:03.123, 1, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":21021.655225176,"data":"VRAM 2026/10/03 04:18:03.137, 0, 3371 MiB, 15360 MiB, 99 %\n"}
+,{"stream_name":"stdout","time":21021.657014382,"data":"VRAM 2026/10/03 04:18:03.140, 1, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":21141.671291868,"data":"VRAM 2026/10/03 04:20:03.154, 0, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":21141.673081259,"data":"VRAM 2026/10/03 04:20:03.156, 1, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":21228.919034598,"data":"    it   3999  grad-match [0.10526, 0.11766]\n"}
+,{"stream_name":"stdout","time":21229.544057489,"data":"RESULT [dinov2] client p024: PSNR consensus 9.72 dB | best seed 9.21 dB | gray floor 9.35 dB | label acc 0.88 | 87.0 min\n"}
+,{"stream_name":"stdout","time":21231.211875829,"data":"[dinov2] client p035: true labels [0, 1, 3, 4, 5, 6, 7, 9] restored [0, 1, 2, 4, 6, 7, 8, 9]\n"}
+,{"stream_name":"stdout","time":21232.667235556,"data":"    it      0  grad-match [6.85401, 7.12518]\n"}
+,{"stream_name":"stdout","time":21261.686836832,"data":"VRAM 2026/10/03 04:22:03.169, 0, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":21261.689174891,"data":"VRAM 2026/10/03 04:22:03.171, 1, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":21373.218302014,"data":"    it   1500  grad-match [0.21461, 0.2099]\n"}
+,{"stream_name":"stdout","time":21381.702789521,"data":"VRAM 2026/10/03 04:24:03.185, 0, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":21381.704653811,"data":"VRAM 2026/10/03 04:24:03.187, 1, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":21501.719411372,"data":"VRAM 2026/10/03 04:26:03.201, 0, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":21501.720942995,"data":"VRAM 2026/10/03 04:26:03.204, 1, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":21621.734406465,"data":"VRAM 2026/10/03 04:28:03.217, 0, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":21621.736219066,"data":"VRAM 2026/10/03 04:28:03.219, 1, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":21741.750499633,"data":"VRAM 2026/10/03 04:30:03.233, 0, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":21741.752306148,"data":"VRAM 2026/10/03 04:30:03.235, 1, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":21861.767049853,"data":"VRAM 2026/10/03 04:32:03.249, 0, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":21861.768630337,"data":"VRAM 2026/10/03 04:32:03.251, 1, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":21883.319843712,"data":"    it    500  grad-match [0.05331, 0.04139]\n"}
+,{"stream_name":"stdout","time":21974.932179121,"data":"    it   2000  grad-match [0.13335, 0.19654]\n"}
+,{"stream_name":"stdout","time":21981.783318335,"data":"VRAM 2026/10/03 04:34:03.265, 0, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":21981.78568615,"data":"VRAM 2026/10/03 04:34:03.268, 1, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":22101.799328186,"data":"VRAM 2026/10/03 04:36:03.282, 0, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":22101.800675001,"data":"VRAM 2026/10/03 04:36:03.284, 1, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":22221.81430285,"data":"VRAM 2026/10/03 04:38:03.297, 0, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":22221.816469718,"data":"VRAM 2026/10/03 04:38:03.299, 1, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":22341.832280756,"data":"VRAM 2026/10/03 04:40:03.313, 0, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":22341.832444082,"data":"VRAM 2026/10/03 04:40:03.315, 1, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":22461.846716973,"data":"VRAM 2026/10/03 04:42:03.329, 0, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":22461.848964405,"data":"VRAM 2026/10/03 04:42:03.331, 1, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":22532.102047602,"data":"    it   1000  grad-match [0.03192, 0.03116]\n"}
+,{"stream_name":"stdout","time":22574.683903426,"data":"    it   2500  grad-match [0.10929, 0.15204]\n"}
+,{"stream_name":"stdout","time":22581.863763214,"data":"VRAM 2026/10/03 04:44:03.345, 0, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":22581.865733748,"data":"VRAM 2026/10/03 04:44:03.348, 1, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":22701.879316529,"data":"VRAM 2026/10/03 04:46:03.362, 0, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":22701.880927848,"data":"VRAM 2026/10/03 04:46:03.364, 1, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":22821.896547768,"data":"VRAM 2026/10/03 04:48:03.378, 0, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":22821.896893648,"data":"VRAM 2026/10/03 04:48:03.380, 1, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":22941.911549789,"data":"VRAM 2026/10/03 04:50:03.393, 0, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":22941.913506307,"data":"VRAM 2026/10/03 04:50:03.396, 1, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":23061.927437021,"data":"VRAM 2026/10/03 04:52:03.410, 0, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":23061.928738685,"data":"VRAM 2026/10/03 04:52:03.412, 1, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":23174.43306942,"data":"    it   3000  grad-match [0.08041, 0.11309]\n"}
+,{"stream_name":"stdout","time":23181.367658854,"data":"    it   1500  grad-match [0.02694, 0.03044]\n"}
+,{"stream_name":"stdout","time":23181.942603889,"data":"VRAM 2026/10/03 04:54:03.425, 0, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":23181.946039784,"data":"VRAM 2026/10/03 04:54:03.427, 1, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":23301.963405336,"data":"VRAM 2026/10/03 04:56:03.443, 0, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":23301.963454571,"data":"VRAM 2026/10/03 04:56:03.445, 1, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":23421.977092389,"data":"VRAM 2026/10/03 04:58:03.460, 0, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":23421.978624701,"data":"VRAM 2026/10/03 04:58:03.461, 1, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":23541.992668016,"data":"VRAM 2026/10/03 05:00:03.475, 0, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":23541.994644462,"data":"VRAM 2026/10/03 05:00:03.477, 1, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":23662.00936674,"data":"VRAM 2026/10/03 05:02:03.491, 0, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":23662.010593231,"data":"VRAM 2026/10/03 05:02:03.493, 1, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":23775.605254235,"data":"    it   3500  grad-match [0.0728, 0.09042]\n"}
+,{"stream_name":"stdout","time":23782.02740929,"data":"VRAM 2026/10/03 05:04:03.507, 0, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":23782.027984057,"data":"VRAM 2026/10/03 05:04:03.511, 1, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":23831.414777662,"data":"    it   2000  grad-match [0.04856, 0.02641]\n"}
+,{"stream_name":"stdout","time":23902.04162324,"data":"VRAM 2026/10/03 05:06:03.524, 0, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":23902.043357809,"data":"VRAM 2026/10/03 05:06:03.526, 1, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":24022.057527421,"data":"VRAM 2026/10/03 05:08:03.540, 0, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":24022.059238691,"data":"VRAM 2026/10/03 05:08:03.542, 1, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":24142.072874843,"data":"VRAM 2026/10/03 05:10:03.555, 0, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":24142.074450059,"data":"VRAM 2026/10/03 05:10:03.557, 1, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":24262.088009312,"data":"VRAM 2026/10/03 05:12:03.571, 0, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":24262.092286058,"data":"VRAM 2026/10/03 05:12:03.572, 1, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":24374.843831194,"data":"    it   3999  grad-match [0.07167, 0.08791]\n"}
+,{"stream_name":"stdout","time":24375.408672668,"data":"RESULT [dinov2] client p026: PSNR consensus 9.74 dB | best seed 9.46 dB | gray floor 9.32 dB | label acc 0.75 | 80.1 min\n"}
+,{"stream_name":"stdout","time":24382.107063471,"data":"VRAM 2026/10/03 05:14:03.589, 0, 0 MiB, 15360 MiB, 0 %\n"}
+,{"stream_name":"stdout","time":24382.109149671,"data":"VRAM 2026/10/03 05:14:03.591, 1, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":24481.324876883,"data":"    it   2500  grad-match [0.05182, 0.02478]\n"}
+,{"stream_name":"stdout","time":24502.123697677,"data":"VRAM 2026/10/03 05:16:03.605, 0, 0 MiB, 15360 MiB, 0 %\n"}
+,{"stream_name":"stdout","time":24502.125751333,"data":"VRAM 2026/10/03 05:16:03.608, 1, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":24622.140685299,"data":"VRAM 2026/10/03 05:18:03.622, 0, 0 MiB, 15360 MiB, 0 %\n"}
+,{"stream_name":"stdout","time":24622.142368927,"data":"VRAM 2026/10/03 05:18:03.625, 1, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":24742.157411074,"data":"VRAM 2026/10/03 05:20:03.639, 0, 0 MiB, 15360 MiB, 0 %\n"}
+,{"stream_name":"stdout","time":24742.159493593,"data":"VRAM 2026/10/03 05:20:03.642, 1, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":24862.174418534,"data":"VRAM 2026/10/03 05:22:03.656, 0, 0 MiB, 15360 MiB, 0 %\n"}
+,{"stream_name":"stdout","time":24862.177638646,"data":"VRAM 2026/10/03 05:22:03.659, 1, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":24982.192402669,"data":"VRAM 2026/10/03 05:24:03.674, 0, 0 MiB, 15360 MiB, 0 %\n"}
+,{"stream_name":"stdout","time":24982.19396942,"data":"VRAM 2026/10/03 05:24:03.677, 1, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":25102.21113211,"data":"VRAM 2026/10/03 05:26:03.691, 0, 0 MiB, 15360 MiB, 0 %\n"}
+,{"stream_name":"stdout","time":25102.211465091,"data":"VRAM 2026/10/03 05:26:03.694, 1, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":25134.720908585,"data":"    it   3000  grad-match [0.02491, 0.02369]\n"}
+,{"stream_name":"stdout","time":25222.226514151,"data":"VRAM 2026/10/03 05:28:03.708, 0, 0 MiB, 15360 MiB, 0 %\n"}
+,{"stream_name":"stdout","time":25222.228674743,"data":"VRAM 2026/10/03 05:28:03.711, 1, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":25342.2432087,"data":"VRAM 2026/10/03 05:30:03.725, 0, 0 MiB, 15360 MiB, 0 %\n"}
+,{"stream_name":"stdout","time":25342.244594332,"data":"VRAM 2026/10/03 05:30:03.727, 1, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":25462.25941829,"data":"VRAM 2026/10/03 05:32:03.741, 0, 0 MiB, 15360 MiB, 0 %\n"}
+,{"stream_name":"stdout","time":25462.261559423,"data":"VRAM 2026/10/03 05:32:03.744, 1, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":25582.275769156,"data":"VRAM 2026/10/03 05:34:03.758, 0, 0 MiB, 15360 MiB, 0 %\n"}
+,{"stream_name":"stdout","time":25582.277731344,"data":"VRAM 2026/10/03 05:34:03.760, 1, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":25702.292646707,"data":"VRAM 2026/10/03 05:36:03.774, 0, 0 MiB, 15360 MiB, 0 %\n"}
+,{"stream_name":"stdout","time":25702.294465175,"data":"VRAM 2026/10/03 05:36:03.777, 1, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":25787.683759915,"data":"    it   3500  grad-match [0.02326, 0.02317]\n"}
+,{"stream_name":"stdout","time":25822.308750918,"data":"VRAM 2026/10/03 05:38:03.790, 0, 0 MiB, 15360 MiB, 0 %\n"}
+,{"stream_name":"stdout","time":25822.31035043,"data":"VRAM 2026/10/03 05:38:03.793, 1, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":25942.326883876,"data":"VRAM 2026/10/03 05:40:03.807, 0, 0 MiB, 15360 MiB, 0 %\n"}
+,{"stream_name":"stdout","time":25942.327157541,"data":"VRAM 2026/10/03 05:40:03.810, 1, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":26062.342809145,"data":"VRAM 2026/10/03 05:42:03.824, 0, 0 MiB, 15360 MiB, 0 %\n"}
+,{"stream_name":"stdout","time":26062.344529311,"data":"VRAM 2026/10/03 05:42:03.827, 1, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":26182.359677985,"data":"VRAM 2026/10/03 05:44:03.841, 0, 0 MiB, 15360 MiB, 0 %\n"}
+,{"stream_name":"stdout","time":26182.361190103,"data":"VRAM 2026/10/03 05:44:03.844, 1, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":26302.376471086,"data":"VRAM 2026/10/03 05:46:03.858, 0, 0 MiB, 15360 MiB, 0 %\n"}
+,{"stream_name":"stdout","time":26302.377779581,"data":"VRAM 2026/10/03 05:46:03.861, 1, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":26422.392419379,"data":"VRAM 2026/10/03 05:48:03.874, 0, 0 MiB, 15360 MiB, 0 %\n"}
+,{"stream_name":"stdout","time":26422.393990387,"data":"VRAM 2026/10/03 05:48:03.877, 1, 3371 MiB, 15360 MiB, 100 %\n"}
+,{"stream_name":"stdout","time":26439.44847358,"data":"    it   3999  grad-match [0.02298, 0.02296]\n"}
+,{"stream_name":"stdout","time":26439.863480669,"data":"RESULT [dinov2] client p035: PSNR consensus 9.94 dB | best seed 9.87 dB | gray floor 9.15 dB | label acc 0.75 | 86.8 min\n"}
+,{"stream_name":"stderr","time":26443.713868429,"data":"/usr/local/lib/python3.13/dist-packages/mistune.py:435: SyntaxWarning: invalid escape sequence '\\|'\n"}
+,{"stream_name":"stderr","time":26443.713897913,"data":"  cells[i][c] = re.sub('\\\\\\\\\\|', '|', cell)\n"}
+,{"stream_name":"stderr","time":26444.017991357,"data":"/usr/local/lib/python3.13/dist-packages/nbconvert/filters/filter_links.py:36: SyntaxWarning: invalid escape sequence '\\_'\n"}
+,{"stream_name":"stderr","time":26444.018018657,"data":"  text = re.sub(r'_', '\\_', text) # Escape underscores in display text\n"}
+,{"stream_name":"stderr","time":26444.919801202,"data":"[NbConvertApp] Converting notebook __script__.ipynb to html\n"}
+,{"stream_name":"stderr","time":26446.012904866,"data":"[NbConvertApp] Writing 274207 bytes to __results__.html\n"}
+]

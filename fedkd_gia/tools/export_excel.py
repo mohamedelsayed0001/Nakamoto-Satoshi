@@ -164,6 +164,53 @@ def experiment_sheets(wb, name, files):
             row += int(img.height / 20) + 4
 
 
+def comparison_sheet(wb, results_dir, prefix="gi_s"):
+    """Client x setting comparison over the full attack runs (folders starting with `prefix`)."""
+    res = {}
+    for exp in sorted(os.listdir(results_dir)):
+        if not exp.startswith(prefix):
+            continue
+        for f in glob.glob(os.path.join(results_dir, exp, "**", "results.jsonl"), recursive=True):
+            for l in open(f):
+                r = json.loads(l)
+                res.setdefault(r["client"], {})[r["setting"]] = r
+    if not res:
+        return
+    settings = [s for s in SETTING_NAMES if any(s in v for v in res.values())]
+    ws = wb.create_sheet("GI_Comparison", 0)
+    headers = ["Client", "PSNR gray floor (dB)"]
+    for s in settings:
+        headers += [f"{s}: PSNR consensus (dB)", f"{s}: gain over floor (dB)", f"{s}: PSNR best seed (dB)"]
+    clients = sorted(res)
+    rows = []
+    for i, c in enumerate(clients, 2):
+        floor = next(iter(res[c].values()))["psnr_gray_floor"]
+        row = [c, floor]
+        for j, s in enumerate(settings):
+            col = get_column_letter(3 + 3 * j)
+            r = res[c].get(s)
+            row += [r["psnr_consensus"] if r else None, f"={col}{i}-$B{i}" if r else None,
+                    r["psnr_best_seed"] if r else None]
+        rows.append(row)
+    last = write_table(ws, 1, headers, rows, {k: "0.00" for k in range(2, len(headers) + 1)})
+    mean_row, above_row = last + 1, last + 2
+    ws.cell(row=mean_row, column=1, value="Mean").font = Font(name=FONT, bold=True)
+    ws.cell(row=above_row, column=1, value="Clients above floor").font = Font(name=FONT, bold=True)
+    for k in range(2, len(headers) + 1):
+        col = get_column_letter(k)
+        c = ws.cell(row=mean_row, column=k, value=f"=AVERAGE({col}2:{col}{last})")
+        c.number_format, c.font = "0.00", Font(name=FONT, bold=True)
+    for j in range(len(settings)):
+        col = get_column_letter(4 + 3 * j)
+        ws.cell(row=above_row, column=4 + 3 * j, value=f'=COUNTIF({col}2:{col}{last},">0")').font = Font(name=FONT, bold=True)
+    notes = ["Settings: " + "; ".join(f"{s} = {SETTING_NAMES[s]}" for s in settings),
+             "Gain over floor = consensus PSNR minus PSNR of a uniform gray image (no-information reference).",
+             "All attacks: round-30 victim gradient, batch 8, 4000 iterations, 2 seeds, TV 1, no Langevin noise."]
+    for i, t in enumerate(notes, above_row + 2):
+        ws.cell(row=i, column=1, value=t).font = Font(name=FONT, italic=True)
+    ws.freeze_panes = "B2"
+
+
 def main():
     p = argparse.ArgumentParser()
     p.add_argument("--results", default=os.path.join(os.path.dirname(os.path.dirname(__file__)), "results"))
@@ -178,6 +225,7 @@ def main():
         files = sorted(glob.glob(os.path.join(args.results, exp, "**", "results.jsonl"), recursive=True))
         if files:
             experiment_sheets(wb, exp, files)
+    comparison_sheet(wb, args.results)
     wb.save(out)
     print("saved", out, "sheets:", wb.sheetnames)
 
