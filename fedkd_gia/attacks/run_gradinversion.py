@@ -76,6 +76,8 @@ def main():
     p.add_argument("--group_start", type=float, default=0.25, help="fraction of iterations before R_group")
     p.add_argument("--log_every", type=int, default=500)
     p.add_argument("--time_budget_hours", type=float, default=0)
+    p.add_argument("--track_psnr", type=int, default=0,
+                   help="log PSNR vs ground truth at every log step (evaluation only)")
     args = p.parse_args()
     cfg = SimpleNamespace(**vars(args))
     t0 = time.time()
@@ -119,7 +121,13 @@ def main():
 
             attack = GradInversion(student, v["grads"], labels.sort()[0], surrogates.get(setting), cfg)
             seeds = list(range(args.num_seeds))
-            finals, history = attack.run(gt.shape, seeds, args.log_every, log=lambda s: print(s, flush=True))
+            monitor = None
+            if args.track_psnr:
+                def monitor(xs, losses, gt=gt):
+                    return {"psnr_consensus": score(torch.stack(xs).mean(0), gt)[0],
+                            "psnr_best_seed": score(xs[int(np.argmin(losses))], gt)[0]}
+            finals, history = attack.run(gt.shape, seeds, args.log_every, log=lambda s: print(s, flush=True),
+                                         monitor=monitor)
             final_losses = history[-1]["grad_loss"]
             best = int(np.argmin(final_losses))
             consensus = torch.stack(finals).mean(0)

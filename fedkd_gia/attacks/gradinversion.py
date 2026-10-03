@@ -109,7 +109,8 @@ class GradInversion:
         diff = sum(((g - t) ** 2).sum() for g, t in zip(grads, self.target))
         return diff / self.target_norm
 
-    def run(self, shape, seeds, log_every=500, log=print):
+    def run(self, shape, seeds, log_every=500, log=print, monitor=None):
+        """monitor(xs, grad_losses) -> dict is called at every log step; evaluation only, never used to optimize."""
         c = self.cfg
         device = self.labels.device
         xs, nuisances, opts = [], [], []
@@ -152,7 +153,12 @@ class GradInversion:
                     x.add_(c.alpha_noise * c.lr * f * torch.randn_like(x)).clamp_(-1, 1)
                 rec.append(l_grad.item())
             if it % log_every == 0 or it == c.iterations - 1:
-                history.append({"it": it, "grad_loss": rec})
-                log(f"    it {it:6d}  grad-match {[round(v, 5) for v in rec]}")
+                entry = {"it": it, "grad_loss": rec}
+                if monitor is not None:
+                    with torch.no_grad():
+                        entry.update(monitor([x.detach() for x in xs], rec))
+                history.append(entry)
+                extra = {k: round(v, 3) for k, v in entry.items() if k.startswith("psnr")}
+                log(f"    it {it:6d}  grad-match {[round(v, 5) for v in rec]} {extra if extra else ''}")
         final = [x.detach() for x in xs]
         return final, history
