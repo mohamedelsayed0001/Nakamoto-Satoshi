@@ -12,6 +12,7 @@ usage: python tools/export_excel.py [--results results] [--out results/fedkd_gia
 """
 import argparse
 import glob
+import io
 import json
 import os
 
@@ -157,9 +158,15 @@ def experiment_sheets(wb, name, files):
             setting, client = stem.split("_", 1)
             run = os.path.basename(os.path.dirname(p))
             wi.cell(row=row, column=1, value=f"{SETTING_NAMES.get(setting, setting)} - client {client} - run {run}").font = Font(name=FONT, bold=True)
-            w, h = Image.open(p).size
-            img = XLImage(p)
-            img.width, img.height = 1100, int(1100 * h / w)
+            # Embed a downscaled JPEG copy so the workbook stays small; full-size PNGs stay in results/.
+            im = Image.open(p).convert("RGB")
+            w, h = im.size
+            small = im.resize((1100, int(1100 * h / w)), Image.LANCZOS)
+            buf = io.BytesIO()
+            small.save(buf, format="JPEG", quality=85)
+            buf.seek(0)
+            img = XLImage(buf)
+            img.width, img.height = small.size
             wi.add_image(img, f"A{row + 1}")
             row += int(img.height / 20) + 4
 
