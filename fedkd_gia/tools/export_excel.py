@@ -55,22 +55,28 @@ def write_table(ws, start_row, headers, rows, formats=None):
 def baseline_sheets(wb, run_dir):
     recs = [json.loads(l) for l in open(os.path.join(run_dir, "metrics.jsonl"))]
     ws = wb.create_sheet("Baseline_Rounds")
-    headers = ["Round", "Global student acc", "Global student macro-F1", "Mean per-client student acc",
-               "Mean per-client teacher acc", "Round time (min)"]
+    headers = ["Round", "Global student acc", "Global student macro-F1", "Mean per-driver student acc",
+               "Mean private teacher acc", "Round time (min)", "Mean private teacher macro-F1"]
     rows = [[r["round"], r["global_student_acc"], r["global_student_macro_f1"], r["mean_client_student_acc"],
-             r["mean_client_teacher_acc"], r["round_seconds"] / 60] for r in recs]
-    pct = {2: "0.00%", 3: "0.0000", 4: "0.00%", 5: "0.00%", 6: "0.0"}
+             r["mean_client_teacher_acc"], r["round_seconds"] / 60, r.get("mean_client_teacher_macro_f1")]
+            for r in recs]
+    pct = {2: "0.00%", 3: "0.0000", 4: "0.00%", 5: "0.00%", 6: "0.0", 7: "0.0000"}
     last = write_table(ws, 1, headers, rows, pct)
     ws.freeze_panes = "A2"
 
     wc = wb.create_sheet("Baseline_Clients")
     final = recs[-1]["per_client"]
-    rows = [[cid, v["student_acc"], v["teacher_test_acc"], v["train_acc_s"], v["train_acc_t"]]
+    rows = [[cid, v.get("student_acc"), v["teacher_test_acc"], v["train_acc_s"], v["train_acc_t"]]
             for cid, v in sorted(final.items())]
     write_table(wc, 1, ["Driver (client)", f"Global student test acc (round {recs[-1]['round']})",
                         "Private teacher test acc", "Student train acc (local)", "Teacher train acc (local)"],
                 rows, {2: "0.00%", 3: "0.00%", 4: "0.00%", 5: "0.00%"})
     wc.freeze_panes = "A2"
+    held = recs[-1].get("per_heldout_driver")
+    if held:
+        wh = wb.create_sheet("Baseline_HeldOut")
+        write_table(wh, 1, ["Held-out driver (never trained on)", "Global student acc (round 30)", "Images"],
+                    [[d, v["student_acc"], v["n"]] for d, v in sorted(held.items())], {2: "0.00%"})
 
     s = wb.create_sheet("Baseline_Summary")
     n = last  # last data row in Baseline_Rounds
@@ -81,6 +87,7 @@ def baseline_sheets(wb, run_dir):
         ("Best global student acc", f"=MAX(Baseline_Rounds!B2:B{n})", "0.00%"),
         ("Best global student macro-F1", f"=MAX(Baseline_Rounds!C2:C{n})", "0.0000"),
         ("Best mean private teacher acc", f"=MAX(Baseline_Rounds!E2:E{n})", "0.00%"),
+        ("Final mean private teacher macro-F1", f"=Baseline_Rounds!G{n}", "0.0000"),
         ("Total training time (h)", f"=SUM(Baseline_Rounds!F2:F{n})/60", "0.00"),
     ]
     write_table(s, 1, ["Metric", "Value"], [])
@@ -91,8 +98,8 @@ def baseline_sheets(wb, run_dir):
         c.number_format = fmt
     s.column_dimensions["A"].width = 34
     s.cell(row=len(items) + 3, column=1,
-           value="Setting: 26 clients (one per driver), 30 rounds x 5 local epochs, batch 8, ViT-B mentor / ViT-S "
-                 "mentee, full FedKD loss, no SVD compression. Teacher F1 was not logged.").font = Font(name=FONT, italic=True)
+           value="Setting: 21 clients (one per driver; p064, p066, p072, p075, p081 held out as unseen test drivers), 30 rounds x 5 local epochs, batch 8, ViT-B mentor / ViT-S "
+                 "mentee, full FedKD loss, no SVD compression. Accuracy and F1 are measured on the held-out drivers.").font = Font(name=FONT, italic=True)
 
 
 def experiment_sheets(wb, name, files):
@@ -175,7 +182,7 @@ def experiment_sheets(wb, name, files):
 def comparison_sheet(wb, results_dir, prefix="gi_s"):
     """Client x setting comparison over the full attack runs (folders starting with `prefix`)."""
     res = {}
-    for exp in sorted(os.listdir(results_dir)):
+    for exp in [e for e in sorted(os.listdir(results_dir)) if not e.startswith("old_")]:
         if not (exp.startswith(prefix) or exp == "S2_full"):
             continue
         for f in glob.glob(os.path.join(results_dir, exp, "**", "results.jsonl"), recursive=True):
@@ -231,12 +238,12 @@ def main():
     wb = Workbook()
     wb.remove(wb.active)
     baseline_sheets(wb, os.path.join(args.results, "baseline", "run"))
-    for exp in sorted(os.listdir(args.results)):
+    for exp in [e for e in sorted(os.listdir(args.results)) if not e.startswith("old_")]:
         files = sorted(glob.glob(os.path.join(args.results, exp, "**", "results.jsonl"), recursive=True))
         if files:
             experiment_sheets(wb, exp, files)
     comparison_sheet(wb, args.results)
-    for exp in sorted(os.listdir(args.results)):
+    for exp in [e for e in sorted(os.listdir(args.results)) if not e.startswith("old_")]:
         plots = sorted(glob.glob(os.path.join(args.results, exp, "plots", "*.png")))
         if plots:
             ws = wb.create_sheet((exp + "_Plots")[:31])
