@@ -62,6 +62,16 @@ def make_client_splits(meta, test_frac=0.2, seed=42):
     return splits
 
 
+def make_driver_splits(meta, holdout_drivers):
+    """Split (a): held-out drivers form an unseen test set; every other driver is a client that trains on
+    all of its images. Returns ({driver_id: {"train": idx, "test": empty}}, holdout_idx)."""
+    holdout = set(holdout_drivers)
+    splits = {s: {"train": np.sort(g.index.values), "test": np.array([], dtype=int)}
+              for s, g in meta.groupby("subject", sort=True) if s not in holdout}
+    holdout_idx = np.sort(meta.index[meta.subject.isin(holdout)].values)
+    return splits, holdout_idx
+
+
 class CachedImages(Dataset):
     def __init__(self, images, labels, indices):
         self.images = images  # memmap/ndarray (N,H,W,3) uint8

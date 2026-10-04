@@ -15,7 +15,7 @@ import time
 import numpy as np
 import torch
 
-from data import NUM_CLASSES, load_cache, make_client_splits, prepare_cache
+from data import NUM_CLASSES, load_cache, make_client_splits, make_driver_splits, prepare_cache
 from fedkd import aggregate, client_update, macro_f1, predict
 from models import HiddenProjector, build_student, build_teacher, shared_state
 
@@ -31,6 +31,11 @@ def parse_args(argv=None):
     p.add_argument("--batch_size", type=int, default=8)
     p.add_argument("--eval_batch_size", type=int, default=64)
     p.add_argument("--lr", type=float, default=3e-5)
+    p.add_argument("--split", choices=["driver", "within"], default="driver",
+                   help="driver: held-out drivers are an unseen test set (split a); within: 80/20 inside each driver")
+    p.add_argument("--holdout_drivers", default="p064,p066,p072,p075,p081")
+    p.add_argument("--teacher_eval_size", type=int, default=1000,
+                   help="driver split: held-out images per teacher evaluation (all of them in the final round)")
     p.add_argument("--test_frac", type=float, default=0.2)
     p.add_argument("--seed", type=int, default=42)
     p.add_argument("--num_workers", type=int, default=2)
@@ -83,11 +88,24 @@ def main(args):
     prepare_cache(args.data_root, args.cache_dir)
     images, meta = load_cache(args.cache_dir)
     labels = meta.label.values
-    splits = make_client_splits(meta, args.test_frac, args.seed)
+    if args.split == "driver":
+        splits, holdout_idx = make_driver_splits(meta, args.holdout_drivers.split(","))
+        rng = np.random.default_rng(args.seed)
+        teacher_eval_idx = np.sort(rng.choice(holdout_idx, min(args.teacher_eval_size, len(holdout_idx)),
+                                              replace=False))
+        with open(os.path.join(args.out_dir, "holdout.json"), "w") as f:
+            json.dump({"drivers": args.holdout_drivers.split(","), "indices": holdout_idx.tolist(),
+                       "teacher_eval_subset": teacher_eval_idx.tolist()}, f)
+    else:
+        splits = make_client_splits(meta, args.test_frac, args.seed)
+        holdout_idx = teacher_eval_idx = None
     clients = sorted(splits)[: args.max_clients or None]
     with open(os.path.join(args.out_dir, "splits.json"), "w") as f:
         json.dump({c: {k: v.tolist() for k, v in s.items()} for c, s in splits.items()}, f)
-    print(f"{len(clients)} clients, train sizes: {[len(splits[c]['train']) for c in clients]}", flush=True)
+    msg = f"split={args.split}: {len(clients)} clients, train sizes: {[len(splits[c]['train']) for c in clients]}"
+    if holdout_idx is not None:
+        msg += f", held-out drivers {args.holdout_drivers} ({len(holdout_idx)} images)"
+    print(msg, flush=True)
 
     devices = [torch.device(f"cuda:{i}") for i in range(torch.cuda.device_count())] or [torch.device("cpu")]
     workers = [Worker(d, args) for d in devices]
@@ -150,10 +168,16 @@ def main(args):
                     seed = args.seed * 100003 + rnd * 1009 + clients.index(cid)
                     delta, stats = client_update(worker.teacher, worker.student, worker.projector, images, labels,
                                                  splits[cid]["train"], args, worker.device, seed)
-                    # Private mentor accuracy on the client's own held-out images (after local training).
-                    te_idx = splits[cid]["test"][: args.max_eval or None]
+                    # Private mentor after local training: on unseen drivers (split a; all of them in the
+                    # final round) or on the client's own held-out images (within split).
+                    if args.split == "driver":
+                        te_idx = holdout_idx if rnd + 1 == args.rounds else teacher_eval_idx
+                    else:
+                        te_idx = splits[cid]["test"]
+                    te_idx = te_idx[: args.max_eval or None]
                     tp, ty, tl = predict(worker.teacher, images, labels, te_idx, args, worker.device)
-                    stats.update(teacher_test_acc=float((tp == ty).mean()), teacher_test_loss=tl)
+                    stats.update(teacher_test_acc=float((tp == ty).mean()), teacher_test_loss=tl,
+                                 teacher_test_macro_f1=macro_f1(tp, ty, NUM_CLASSES))
                     if worker.device.type == "cuda":
                         stats.update(gpu=worker.device.index,
                                      peak_alloc_gb=torch.cuda.max_memory_allocated(worker.device) / 2**30,
@@ -183,20 +207,36 @@ def main(args):
         # ---- evaluation of the global student ----
         w = workers[0]
         w.student.load_state_dict(global_state, strict=False)
-        per_client, all_p, all_y = {}, [], []
-        for cid in clients:
-            te_idx = splits[cid]["test"][: args.max_eval or None]
-            p_, y_, l_ = predict(w.student, images, labels, te_idx, args, w.device)
-            per_client[cid] = {"student_acc": float((p_ == y_).mean()), "student_loss": l_,
-                               **{k: results[cid][1][k] for k in ("teacher_test_acc", "train_acc_s", "train_acc_t", "loss")}}
-            all_p.append(p_); all_y.append(y_)
-        all_p, all_y = np.concatenate(all_p), np.concatenate(all_y)
+        keep = ("teacher_test_acc", "teacher_test_macro_f1", "train_acc_s", "train_acc_t", "loss")
+        per_client, per_driver = {}, {}
+        if args.split == "driver":
+            idx = holdout_idx[: args.max_eval or None]
+            all_p, all_y, _ = predict(w.student, images, labels, idx, args, w.device)
+            subj = meta.subject.values[idx]
+            for d in sorted(set(subj)):
+                m = subj == d
+                per_driver[d] = {"student_acc": float((all_p[m] == all_y[m]).mean()), "n": int(m.sum())}
+            for cid in clients:
+                per_client[cid] = {k: results[cid][1][k] for k in keep}
+        else:
+            all_p, all_y = [], []
+            for cid in clients:
+                te_idx = splits[cid]["test"][: args.max_eval or None]
+                p_, y_, l_ = predict(w.student, images, labels, te_idx, args, w.device)
+                per_client[cid] = {"student_acc": float((p_ == y_).mean()), "student_loss": l_,
+                                   **{k: results[cid][1][k] for k in keep}}
+                all_p.append(p_)
+                all_y.append(y_)
+            all_p, all_y = np.concatenate(all_p), np.concatenate(all_y)
         rec = {
             "round": rnd + 1,
+            "split": args.split,
             "global_student_acc": float((all_p == all_y).mean()),
             "global_student_macro_f1": macro_f1(all_p, all_y, NUM_CLASSES),
-            "mean_client_student_acc": float(np.mean([v["student_acc"] for v in per_client.values()])),
+            "mean_client_student_acc": float(np.mean([v["student_acc"] for v in (per_driver or per_client).values()])),
             "mean_client_teacher_acc": float(np.mean([v["teacher_test_acc"] for v in per_client.values()])),
+            "mean_client_teacher_macro_f1": float(np.mean([v["teacher_test_macro_f1"] for v in per_client.values()])),
+            "per_heldout_driver": per_driver,
             "round_seconds": time.time() - r0,
             "per_client": per_client,
         }
@@ -208,6 +248,7 @@ def main(args):
         round_times.append(time.time() - r0)
         print(f"ROUND {rnd + 1}/{args.rounds}: global student acc {rec['global_student_acc']:.4f} "
               f"F1 {rec['global_student_macro_f1']:.4f} | mean teacher acc {rec['mean_client_teacher_acc']:.4f} "
+              f"F1 {rec['mean_client_teacher_macro_f1']:.4f} "
               f"| {rec['round_seconds'] / 60:.1f} min", flush=True)
 
     done = os.path.exists(os.path.join(args.out_dir, "state.json")) and \
