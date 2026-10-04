@@ -25,7 +25,8 @@ from PIL import Image
 FONT = "Arial"
 HEAD_FILL = PatternFill("solid", start_color="DDEBF7")
 SETTING_NAMES = {"none": "S1 no teacher (CE only)", "dinov2": "S2 DINOv2 ViT-B/14 surrogate",
-                 "vitb": "S3 unused ImageNet ViT-B/16 surrogate"}
+                 "vitb": "S3 unused ImageNet ViT-B/16 surrogate",
+                 "dinov2_20k": "S2_full DINOv2 surrogate, 20k iterations"}
 
 
 def style_header(ws, row, ncols):
@@ -175,12 +176,13 @@ def comparison_sheet(wb, results_dir, prefix="gi_s"):
     """Client x setting comparison over the full attack runs (folders starting with `prefix`)."""
     res = {}
     for exp in sorted(os.listdir(results_dir)):
-        if not exp.startswith(prefix):
+        if not (exp.startswith(prefix) or exp == "S2_full"):
             continue
         for f in glob.glob(os.path.join(results_dir, exp, "**", "results.jsonl"), recursive=True):
             for l in open(f):
                 r = json.loads(l)
-                res.setdefault(r["client"], {})[r["setting"]] = r
+                key = "dinov2_20k" if exp == "S2_full" else r["setting"]
+                res.setdefault(r["client"], {})[key] = r
     if not res:
         return
     settings = [s for s in SETTING_NAMES if any(s in v for v in res.values())]
@@ -212,7 +214,8 @@ def comparison_sheet(wb, results_dir, prefix="gi_s"):
         ws.cell(row=above_row, column=4 + 3 * j, value=f'=COUNTIF({col}2:{col}{last},">0")').font = Font(name=FONT, bold=True)
     notes = ["Settings: " + "; ".join(f"{s} = {SETTING_NAMES[s]}" for s in settings),
              "Gain over floor = consensus PSNR minus PSNR of a uniform gray image (no-information reference).",
-             "All attacks: round-30 victim gradient, batch 8, 4000 iterations, 2 seeds, TV 1, no Langevin noise."]
+             "All attacks: round-30 victim gradient, batch 8, 2 seeds, TV 1, no Langevin noise; 4000 iterations "
+             "except dinov2_20k (S2_full: 20000 iterations, 6 clients)."]
     for i, t in enumerate(notes, above_row + 2):
         ws.cell(row=i, column=1, value=t).font = Font(name=FONT, italic=True)
     ws.freeze_panes = "B2"
@@ -233,6 +236,18 @@ def main():
         if files:
             experiment_sheets(wb, exp, files)
     comparison_sheet(wb, args.results)
+    for exp in sorted(os.listdir(args.results)):
+        plots = sorted(glob.glob(os.path.join(args.results, exp, "plots", "*.png")))
+        if plots:
+            ws = wb.create_sheet((exp + "_Plots")[:31])
+            row = 1
+            for p in plots:
+                ws.cell(row=row, column=1, value=os.path.basename(p)).font = Font(name=FONT, bold=True)
+                img = XLImage(p)
+                scale = 900 / img.width
+                img.width, img.height = 900, int(img.height * scale)
+                ws.add_image(img, f"A{row + 1}")
+                row += int(img.height / 20) + 4
     wb.save(out)
     print("saved", out, "sheets:", wb.sheetnames)
 
