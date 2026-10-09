@@ -10,6 +10,8 @@ import subprocess
 import sys
 
 MODE = os.environ.get("FEDKD_MODE", "full")  # "bench" = short speed test, "full" = baseline run
+DATASET = os.environ.get("FEDKD_DATASET", "statefarm")  # "statefarm" or "cifar100"
+EXTRA = os.environ.get("FEDKD_ARGS", "").split()
 BUDGET_HOURS = os.environ.get("FEDKD_BUDGET_HOURS", "11.2")
 
 
@@ -25,7 +27,10 @@ sh("pip install -q 'timm>=1.0.9'")
 subprocess.Popen("nvidia-smi --query-gpu=timestamp,index,memory.used,memory.total,utilization.gpu "
                  "--format=csv,noheader -l 60 | sed -u 's/^/VRAM /'", shell=True)
 
-data_root = os.path.dirname(glob.glob("/kaggle/input/**/driver_imgs_list.csv", recursive=True)[0])
+if DATASET == "cifar100":
+    data_root = "/tmp/cifar100"  # downloaded by torchvision inside prepare_cache
+else:
+    data_root = os.path.dirname(glob.glob("/kaggle/input/**/driver_imgs_list.csv", recursive=True)[0])
 prev = [os.path.dirname(p) for p in glob.glob("/kaggle/input/**/run/state.json", recursive=True)]
 print("data_root:", data_root, "| previous runs:", prev, flush=True)
 
@@ -37,6 +42,7 @@ args = [
     "--num_workers", "2",
     "--time_budget_hours", BUDGET_HOURS,
 ]
+args += EXTRA
 if prev:
     args += ["--resume_from", prev[0]]
 if MODE == "bench":

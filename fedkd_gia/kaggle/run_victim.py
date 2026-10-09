@@ -5,7 +5,9 @@ import subprocess
 import sys
 
 subprocess.run("pip install -q 'timm>=1.0.9'", shell=True, check=True)
-data_root = os.path.dirname(glob.glob("/kaggle/input/**/driver_imgs_list.csv", recursive=True)[0])
+_sf = glob.glob("/kaggle/input/**/driver_imgs_list.csv", recursive=True)
+# No State Farm data attached -> CIFAR-100, downloaded by torchvision inside prepare_cache.
+data_root = os.path.dirname(_sf[0]) if _sf else "/tmp/cifar100"
 baseline = os.path.dirname(os.path.dirname(glob.glob("/kaggle/input/**/run/ckpt/global_student.pt", recursive=True)[0]))
 print("data_root:", data_root, "| baseline:", baseline, flush=True)
 os.chdir(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))

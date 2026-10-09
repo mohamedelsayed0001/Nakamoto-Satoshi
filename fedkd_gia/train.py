@@ -15,7 +15,7 @@ import time
 import numpy as np
 import torch
 
-from data import NUM_CLASSES, load_cache, make_client_splits, make_driver_splits, prepare_cache
+from data import load_cache, make_client_splits, make_driver_splits, make_iid_splits, num_classes, prepare_cache
 from fedkd import aggregate, client_update, macro_f1, predict
 from models import HiddenProjector, build_student, build_teacher, shared_state
 
@@ -31,9 +31,10 @@ def parse_args(argv=None):
     p.add_argument("--batch_size", type=int, default=8)
     p.add_argument("--eval_batch_size", type=int, default=64)
     p.add_argument("--lr", type=float, default=3e-5)
-    p.add_argument("--split", choices=["driver", "within"], default="driver",
+    p.add_argument("--split", choices=["driver", "within", "iid"], default="driver",
                    help="driver: held-out drivers are an unseen test set (split a); within: 80/20 inside each driver")
     p.add_argument("--holdout_drivers", default="p064,p066,p072,p075,p081")
+    p.add_argument("--num_clients", type=int, default=30, help="iid split: number of clients")
     p.add_argument("--teacher_eval_size", type=int, default=1000,
                    help="driver split: held-out images per teacher evaluation (all of them in the final round)")
     p.add_argument("--test_frac", type=float, default=0.2)
@@ -54,15 +55,15 @@ class Worker:
 
     def __init__(self, device, args):
         self.device = device
-        self.teacher = build_teacher(NUM_CLASSES, args.pretrained, args.freeze_embeddings).to(device)
-        self.student = build_student(NUM_CLASSES, args.pretrained, args.freeze_embeddings).to(device)
+        self.teacher = build_teacher(args.num_classes, args.pretrained, args.freeze_embeddings).to(device)
+        self.student = build_student(args.num_classes, args.pretrained, args.freeze_embeddings).to(device)
         self.projector = HiddenProjector(self.student.depth, self.student.embed_dim, self.teacher.embed_dim).to(device)
 
 
 def init_client_state(args, worker):
     """Every client starts from the same pretrained teacher and a fresh projector."""
     torch.manual_seed(args.seed)
-    t = build_teacher(NUM_CLASSES, args.pretrained, args.freeze_embeddings)
+    t = build_teacher(args.num_classes, args.pretrained, args.freeze_embeddings)
     pr = HiddenProjector(worker.student.depth, worker.student.embed_dim, worker.teacher.embed_dim)
     return {"teacher": t.state_dict(), "projector": pr.state_dict()}
 
@@ -87,6 +88,7 @@ def main(args):
 
     prepare_cache(args.data_root, args.cache_dir)
     images, meta = load_cache(args.cache_dir)
+    args.num_classes = num_classes(args.cache_dir)
     labels = meta.label.values
     if args.split == "driver":
         splits, holdout_idx = make_driver_splits(meta, args.holdout_drivers.split(","))
@@ -96,6 +98,9 @@ def main(args):
         with open(os.path.join(args.out_dir, "holdout.json"), "w") as f:
             json.dump({"drivers": args.holdout_drivers.split(","), "indices": holdout_idx.tolist(),
                        "teacher_eval_subset": teacher_eval_idx.tolist()}, f)
+    elif args.split == "iid":
+        splits, holdout_idx = make_iid_splits(meta, args.num_clients, args.test_frac, args.seed)
+        teacher_eval_idx = None
     else:
         splits = make_client_splits(meta, args.test_frac, args.seed)
         holdout_idx = teacher_eval_idx = None
@@ -177,7 +182,7 @@ def main(args):
                     te_idx = te_idx[: args.max_eval or None]
                     tp, ty, tl = predict(worker.teacher, images, labels, te_idx, args, worker.device)
                     stats.update(teacher_test_acc=float((tp == ty).mean()), teacher_test_loss=tl,
-                                 teacher_test_macro_f1=macro_f1(tp, ty, NUM_CLASSES))
+                                 teacher_test_macro_f1=macro_f1(tp, ty, args.num_classes))
                     if worker.device.type == "cuda":
                         stats.update(gpu=worker.device.index,
                                      peak_alloc_gb=torch.cuda.max_memory_allocated(worker.device) / 2**30,
@@ -228,11 +233,17 @@ def main(args):
                 all_p.append(p_)
                 all_y.append(y_)
             all_p, all_y = np.concatenate(all_p), np.concatenate(all_y)
+        local_test_acc = None
+        if args.split == "iid":
+            # Headline number: the official test set no client trains on; keep the pooled local-test accuracy.
+            local_test_acc = float((all_p == all_y).mean())
+            all_p, all_y, _ = predict(w.student, images, labels, holdout_idx[: args.max_eval or None], args, w.device)
         rec = {
             "round": rnd + 1,
             "split": args.split,
+            "local_test_student_acc": local_test_acc,
             "global_student_acc": float((all_p == all_y).mean()),
-            "global_student_macro_f1": macro_f1(all_p, all_y, NUM_CLASSES),
+            "global_student_macro_f1": macro_f1(all_p, all_y, args.num_classes),
             "mean_client_student_acc": float(np.mean([v["student_acc"] for v in (per_driver or per_client).values()])),
             "mean_client_teacher_acc": float(np.mean([v["teacher_test_acc"] for v in per_client.values()])),
             "mean_client_teacher_macro_f1": float(np.mean([v["teacher_test_macro_f1"] for v in per_client.values()])),

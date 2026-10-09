@@ -19,7 +19,7 @@ from scipy.optimize import linear_sum_assignment
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from data import load_cache, prepare_cache  # noqa: E402
+from data import load_cache, num_classes, prepare_cache  # noqa: E402
 from gradinversion import GradInversion, Surrogate, restore_labels  # noqa: E402
 from victim import load_student, to_input  # noqa: E402
 
@@ -52,7 +52,10 @@ def align(rec, cols):
 def save_grid(path, gt, recs):
     rows = [gt] + recs
     t = torch.cat([torch.cat(list((r * 0.5 + 0.5).clamp(0, 1).cpu()), dim=2) for r in rows], dim=1)
-    Image.fromarray((t.permute(1, 2, 0).numpy() * 255).astype(np.uint8)).save(path)
+    im = Image.fromarray((t.permute(1, 2, 0).numpy() * 255).astype(np.uint8))
+    if gt.shape[-1] < 128:  # small images (CIFAR 32x32): enlarge with nearest-neighbour for viewing only
+        im = im.resize((im.width * 4, im.height * 4), Image.NEAREST)
+    im.save(path)
 
 
 def main():
@@ -89,7 +92,7 @@ def main():
     prepare_cache(args.data_root, args.cache_dir)
     images, _ = load_cache(args.cache_dir)
 
-    student = load_student(os.path.join(args.victim_dir, "global_student.pt"), device)
+    student = load_student(os.path.join(args.victim_dir, "global_student.pt"), device, num_classes(args.cache_dir))
     victims = sorted(os.path.basename(f)[5:-3] for f in glob.glob(os.path.join(args.victim_dir, "grad_*.pt")))
     clients = args.clients.split(",") if args.clients else victims
     res_path = os.path.join(args.out_dir, "results.jsonl")

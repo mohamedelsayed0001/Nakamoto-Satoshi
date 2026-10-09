@@ -2,6 +2,7 @@
 import timm
 import torch
 import torch.nn as nn
+import torch.nn.functional as F
 
 TEACHER_ARCH = "vit_base_patch16_224"
 STUDENT_ARCH = "vit_small_patch16_224"
@@ -36,6 +37,11 @@ class ViTWithInternals(nn.Module):
     def forward(self, x, return_internals=False):
         self.record = return_internals
         self._hidden, self._attn = [], []
+        size = self.vit.patch_embed.img_size[0]
+        if x.shape[-1] != size:
+            # Low-resolution inputs (e.g. CIFAR 32x32) are upsampled inside the model, so gradients
+            # w.r.t. the native-resolution image are available to the attack.
+            x = F.interpolate(x, size=(size, size), mode="bilinear", align_corners=False)
         logits = self.vit(x)
         self.record = False
         if not return_internals:

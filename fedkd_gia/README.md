@@ -55,3 +55,13 @@ kaggle kernels push -p fedkd_gia/kaggle/kernels/baseline   # full run
 ```
 To continue after the 12 h session limit, add `"mohamedelsayed10/fedkd-baseline"` to `kernel_sources`
 in `kernels/baseline/kernel-metadata.json` and push again; the previous output is detected and resumed.
+
+## CIFAR-100 (IID)
+
+`--split iid` with a non-State-Farm `--data_root` uses CIFAR-100 (downloaded by torchvision):
+the 50k training images are dealt class-by-class over `--num_clients 30` clients (IID, ~16-17 images
+per class each), every client keeps a stratified 80/20 local train/test split (1,333 / 334 images),
+and the official 10k test set is the headline global test. Images stay at native 32x32 in the cache;
+the ViTs upsample to 224 internally, so gradient-inversion attacks reconstruct 32x32 images.
+Kaggle: `kaggle kernels push -p fedkd_gia/kaggle/kernels/cifar_baseline` (1 local epoch, 30 rounds),
+then `kernels/cifar_victim` (victim gradients for clients c00-c05).

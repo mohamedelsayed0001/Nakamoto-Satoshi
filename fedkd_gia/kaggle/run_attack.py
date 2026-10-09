@@ -19,7 +19,9 @@ import torch
 subprocess.run("pip install -q 'timm>=1.0.9'", shell=True, check=True)
 subprocess.Popen("nvidia-smi --query-gpu=timestamp,index,memory.used,memory.total,utilization.gpu "
                  "--format=csv,noheader -l 120 | sed -u 's/^/VRAM /'", shell=True)
-data_root = os.path.dirname(glob.glob("/kaggle/input/**/driver_imgs_list.csv", recursive=True)[0])
+_sf = glob.glob("/kaggle/input/**/driver_imgs_list.csv", recursive=True)
+# No State Farm data attached -> CIFAR-100, downloaded by torchvision inside prepare_cache.
+data_root = os.path.dirname(_sf[0]) if _sf else "/tmp/cifar100"
 victim_dir = os.path.dirname(glob.glob("/kaggle/input/**/victims.json", recursive=True)[0])
 n_gpu = max(torch.cuda.device_count(), 1)
 

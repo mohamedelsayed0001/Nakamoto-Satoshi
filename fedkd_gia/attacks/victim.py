@@ -17,7 +17,7 @@ import numpy as np
 import torch
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from data import NUM_CLASSES, load_cache, prepare_cache  # noqa: E402
+from data import NUM_CLASSES, load_cache, num_classes, prepare_cache  # noqa: E402
 from fedkd import fedkd_loss  # noqa: E402
 from models import HiddenProjector, build_student, build_teacher  # noqa: E402
 
@@ -27,8 +27,8 @@ def to_input(images, idx):
     return (x - 0.5) / 0.5
 
 
-def load_student(global_state_path, device):
-    student = build_student(NUM_CLASSES, pretrained=True, freeze_embeddings=True)
+def load_student(global_state_path, device, n_classes=NUM_CLASSES):
+    student = build_student(n_classes, pretrained=True, freeze_embeddings=True)
     student.load_state_dict(torch.load(global_state_path, map_location="cpu"), strict=False)
     return student.to(device).eval()
 
@@ -48,6 +48,7 @@ def main():
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     prepare_cache(args.data_root, args.cache_dir)
     images, meta = load_cache(args.cache_dir)
+    nc = num_classes(args.cache_dir)
     labels = meta.label.values
     with open(os.path.join(args.baseline_dir, "splits.json")) as f:
         splits = json.load(f)
@@ -55,9 +56,9 @@ def main():
 
     os.makedirs(args.out_dir, exist_ok=True)
     gpath = os.path.join(args.baseline_dir, "ckpt", "global_student.pt")
-    student = load_student(gpath, device)
+    student = load_student(gpath, device, nc)
     torch.save(torch.load(gpath, map_location="cpu"), os.path.join(args.out_dir, "global_student.pt"))
-    teacher = build_teacher(NUM_CLASSES, pretrained=False).to(device)
+    teacher = build_teacher(nc, pretrained=False).to(device)
     projector = HiddenProjector(student.depth, student.embed_dim, teacher.embed_dim).to(device)
     params = {n: p_ for n, p_ in student.named_parameters() if p_.requires_grad}
 
@@ -70,7 +71,7 @@ def main():
 
         rng = np.random.default_rng(args.seed * 1000 + ci)
         train_idx = np.array(splits[cid]["train"])
-        chosen_labels = rng.choice(NUM_CLASSES, size=args.batch_size, replace=False)
+        chosen_labels = rng.choice(nc, size=args.batch_size, replace=False)
         idx = [int(rng.choice(train_idx[labels[train_idx] == c])) for c in chosen_labels]
 
         x = to_input(images, idx).to(device)
