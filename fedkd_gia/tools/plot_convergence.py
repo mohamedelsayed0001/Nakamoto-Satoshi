@@ -59,7 +59,7 @@ def main():
     for ax in axes[:, 0]:
         ax.set_ylabel("PSNR minus gray floor (dB)", color=MUTED, fontsize=9)
     axes.flat[0].legend(fontsize=8, frameon=False)
-    fig.suptitle("GradInversion S2 (DINOv2 surrogate), 20k iterations: PSNR gain over gray image",
+    fig.suptitle(f"GradInversion {os.path.basename(os.path.normpath(args.exp_dir))}, 20k iterations: PSNR gain over gray image",
                  color=INK, fontsize=11, x=0.01, ha="left")
     fig.tight_layout()
     fig.savefig(os.path.join(out, "psnr_gain_vs_iteration.png"), dpi=130)

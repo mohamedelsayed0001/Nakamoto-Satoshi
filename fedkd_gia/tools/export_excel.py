@@ -26,6 +26,7 @@ FONT = "Arial"
 HEAD_FILL = PatternFill("solid", start_color="DDEBF7")
 SETTING_NAMES = {"none": "S1 no teacher (CE only)", "dinov2": "S2 DINOv2 ViT-B/14 surrogate",
                  "vitb": "S3 unused ImageNet ViT-B/16 surrogate",
+                 "none_20k": "S1_full no teacher, 20k iterations",
                  "dinov2_20k": "S2_full DINOv2 surrogate, 20k iterations"}
 
 
@@ -183,12 +184,12 @@ def comparison_sheet(wb, results_dir, prefix="gi_s"):
     """Client x setting comparison over the full attack runs (folders starting with `prefix`)."""
     res = {}
     for exp in [e for e in sorted(os.listdir(results_dir)) if not e.startswith("old_")]:
-        if not (exp.startswith(prefix) or exp == "S2_full"):
+        if not (exp.startswith(prefix) or exp in ("S1_full", "S2_full")):
             continue
         for f in glob.glob(os.path.join(results_dir, exp, "**", "results.jsonl"), recursive=True):
             for l in open(f):
                 r = json.loads(l)
-                key = "dinov2_20k" if exp == "S2_full" else r["setting"]
+                key = {"S1_full": "none_20k", "S2_full": "dinov2_20k"}.get(exp, r["setting"])
                 res.setdefault(r["client"], {})[key] = r
     if not res:
         return
@@ -222,7 +223,7 @@ def comparison_sheet(wb, results_dir, prefix="gi_s"):
     notes = ["Settings: " + "; ".join(f"{s} = {SETTING_NAMES[s]}" for s in settings),
              "Gain over floor = consensus PSNR minus PSNR of a uniform gray image (no-information reference).",
              "All attacks: round-30 victim gradient, batch 8, 2 seeds, TV 1, no Langevin noise; 4000 iterations "
-             "except dinov2_20k (S2_full: 20000 iterations, 6 clients)."]
+             "except the _20k columns (S1_full / S2_full: 20000 iterations, 6 clients)."]
     for i, t in enumerate(notes, above_row + 2):
         ws.cell(row=i, column=1, value=t).font = Font(name=FONT, italic=True)
     ws.freeze_panes = "B2"
