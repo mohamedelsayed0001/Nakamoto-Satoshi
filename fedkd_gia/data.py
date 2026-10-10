@@ -111,12 +111,21 @@ def make_client_splits(meta, test_frac=0.2, seed=42):
     return splits
 
 
-def make_driver_splits(meta, holdout_drivers):
-    """Split (a): held-out drivers form an unseen test set; every other driver is a client that trains on
-    all of its images. Returns ({driver_id: {"train": idx, "test": empty}}, holdout_idx)."""
+def make_driver_splits(meta, holdout_drivers, client_test_frac=0.0, seed=42):
+    """Split (a): held-out drivers form an unseen test set; every other driver is a client. With
+    client_test_frac > 0 each client additionally keeps a stratified local test split of its own images.
+    Returns ({driver_id: {"train": idx, "test": idx}}, holdout_idx)."""
     holdout = set(holdout_drivers)
-    splits = {s: {"train": np.sort(g.index.values), "test": np.array([], dtype=int)}
-              for s, g in meta.groupby("subject", sort=True) if s not in holdout}
+    splits = {}
+    for s, g in meta.groupby("subject", sort=True):
+        if s in holdout:
+            continue
+        if client_test_frac > 0:
+            tr, te = train_test_split(g.index.values, test_size=client_test_frac, stratify=g.label.values,
+                                      random_state=seed)
+            splits[s] = {"train": np.sort(tr), "test": np.sort(te)}
+        else:
+            splits[s] = {"train": np.sort(g.index.values), "test": np.array([], dtype=int)}
     holdout_idx = np.sort(meta.index[meta.subject.isin(holdout)].values)
     return splits, holdout_idx
 

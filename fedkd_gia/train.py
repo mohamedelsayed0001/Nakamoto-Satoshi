@@ -38,6 +38,8 @@ def parse_args(argv=None):
     p.add_argument("--split", choices=["driver", "within", "iid"], default="driver",
                    help="driver: held-out drivers are an unseen test set (split a); within: 80/20 inside each driver")
     p.add_argument("--holdout_drivers", default="p064,p066,p072,p075,p081")
+    p.add_argument("--client_test_frac", type=float, default=0.0,
+                   help="driver split: also keep this fraction of every client's images as a local test set")
     p.add_argument("--num_clients", type=int, default=30, help="iid split: number of clients")
     p.add_argument("--teacher_eval_size", type=int, default=1000,
                    help="driver split: held-out images per teacher evaluation (all of them in the final round)")
@@ -96,7 +98,7 @@ def main(args):
     args.num_classes = num_classes(args.cache_dir)
     labels = meta.label.values
     if args.split == "driver":
-        splits, holdout_idx = make_driver_splits(meta, args.holdout_drivers.split(","))
+        splits, holdout_idx = make_driver_splits(meta, args.holdout_drivers.split(","), args.client_test_frac, args.seed)
         rng = np.random.default_rng(args.seed)
         teacher_eval_idx = np.sort(rng.choice(holdout_idx, min(args.teacher_eval_size, len(holdout_idx)),
                                               replace=False))
@@ -188,6 +190,12 @@ def main(args):
                     tp, ty, tl = predict(worker.teacher, images, labels, te_idx, args, worker.device)
                     stats.update(teacher_test_acc=float((tp == ty).mean()), teacher_test_loss=tl,
                                  teacher_test_macro_f1=macro_f1(tp, ty, args.num_classes))
+                    if args.split == "driver" and len(splits[cid]["test"]):
+                        # Driver split with a local 80/20 split: also score the teacher on its own local test.
+                        lp, ly, _ = predict(worker.teacher, images, labels, splits[cid]["test"][: args.max_eval or None],
+                                            args, worker.device)
+                        stats.update(teacher_local_test_acc=float((lp == ly).mean()),
+                                     teacher_local_test_macro_f1=macro_f1(lp, ly, args.num_classes))
                     if worker.device.type == "cuda":
                         stats.update(gpu=worker.device.index,
                                      peak_alloc_gb=torch.cuda.max_memory_allocated(worker.device) / 2**30,
@@ -226,8 +234,19 @@ def main(args):
             for d in sorted(set(subj)):
                 m = subj == d
                 per_driver[d] = {"student_acc": float((all_p[m] == all_y[m]).mean()), "n": int(m.sum())}
+            local_p, local_y = [], []
             for cid in clients:
-                per_client[cid] = {k: results[cid][1][k] for k in keep}
+                per_client[cid] = {k: results[cid][1][k] for k in keep + ("teacher_local_test_acc",
+                                                                          "teacher_local_test_macro_f1")
+                                   if k in results[cid][1]}
+                if len(splits[cid]["test"]):
+                    p_, y_, _ = predict(w.student, images, labels, splits[cid]["test"][: args.max_eval or None],
+                                        args, w.device)
+                    per_client[cid]["student_local_test_acc"] = float((p_ == y_).mean())
+                    local_p.append(p_)
+                    local_y.append(y_)
+            driver_local_acc = (float((np.concatenate(local_p) == np.concatenate(local_y)).mean())
+                                if local_p else None)
         else:
             all_p, all_y = [], []
             for cid in clients:
@@ -238,7 +257,7 @@ def main(args):
                 all_p.append(p_)
                 all_y.append(y_)
             all_p, all_y = np.concatenate(all_p), np.concatenate(all_y)
-        local_test_acc = None
+        local_test_acc = driver_local_acc if args.split == "driver" else None
         if args.split == "iid":
             # Headline number: the official test set no client trains on; keep the pooled local-test accuracy.
             local_test_acc = float((all_p == all_y).mean())
@@ -247,6 +266,8 @@ def main(args):
             "round": rnd + 1,
             "split": args.split,
             "local_test_student_acc": local_test_acc,
+            "mean_client_teacher_local_test_acc": (float(np.mean([v["teacher_local_test_acc"] for v in per_client.values()]))
+                                                   if all("teacher_local_test_acc" in v for v in per_client.values()) else None),
             "global_student_acc": float((all_p == all_y).mean()),
             "global_student_macro_f1": macro_f1(all_p, all_y, args.num_classes),
             "mean_client_student_acc": float(np.mean([v["student_acc"] for v in (per_driver or per_client).values()])),
