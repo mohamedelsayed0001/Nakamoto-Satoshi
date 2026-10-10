@@ -56,8 +56,12 @@ def client_update(teacher, student, projector, images, labels, train_idx, args, 
     """Run `args.local_epochs` of FedKD local training. Returns the student delta and train stats."""
     start = {k: v.clone() for k, v in shared_state(student).items()}
     teacher.train(); student.train(); projector.train()
-    params = [p for m in (teacher, student, projector) for p in m.parameters() if p.requires_grad]
-    opt = torch.optim.Adam(params, lr=args.lr)
+    # AdamW with weight_decay=0 is identical to Adam; teacher_lr=None keeps one learning rate for all.
+    teacher_lr = getattr(args, "teacher_lr", None) or args.lr
+    wd = getattr(args, "weight_decay", 0.0)
+    groups = [{"params": [p for p in teacher.parameters() if p.requires_grad], "lr": teacher_lr},
+              {"params": [p for m in (student, projector) for p in m.parameters() if p.requires_grad], "lr": args.lr}]
+    opt = torch.optim.AdamW(groups, lr=args.lr, weight_decay=wd)
     use_amp = device.type == "cuda" and bool(args.amp)
     scaler = torch.amp.GradScaler("cuda", enabled=use_amp)
 

@@ -31,6 +31,8 @@ def parse_args(argv=None):
     p.add_argument("--batch_size", type=int, default=8)
     p.add_argument("--eval_batch_size", type=int, default=64)
     p.add_argument("--lr", type=float, default=3e-5)
+    p.add_argument("--teacher_lr", type=float, default=None, help="private teacher learning rate (default: --lr)")
+    p.add_argument("--weight_decay", type=float, default=0.0, help="AdamW decoupled weight decay for all models")
     p.add_argument("--split", choices=["driver", "within", "iid"], default="driver",
                    help="driver: held-out drivers are an unseen test set (split a); within: 80/20 inside each driver")
     p.add_argument("--holdout_drivers", default="p064,p066,p072,p075,p081")
