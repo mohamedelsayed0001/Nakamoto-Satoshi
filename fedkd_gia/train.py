@@ -33,6 +33,8 @@ def parse_args(argv=None):
     p.add_argument("--lr", type=float, default=3e-5)
     p.add_argument("--teacher_lr", type=float, default=None, help="private teacher learning rate (default: --lr)")
     p.add_argument("--weight_decay", type=float, default=0.0, help="AdamW decoupled weight decay for all models")
+    p.add_argument("--teacher_trainable_blocks", type=int, default=-1,
+                   help="train only the last N teacher blocks (+ norm, head); -1 = all blocks")
     p.add_argument("--split", choices=["driver", "within", "iid"], default="driver",
                    help="driver: held-out drivers are an unseen test set (split a); within: 80/20 inside each driver")
     p.add_argument("--holdout_drivers", default="p064,p066,p072,p075,p081")
@@ -57,7 +59,8 @@ class Worker:
 
     def __init__(self, device, args):
         self.device = device
-        self.teacher = build_teacher(args.num_classes, args.pretrained, args.freeze_embeddings).to(device)
+        self.teacher = build_teacher(args.num_classes, args.pretrained, args.freeze_embeddings,
+                                     args.teacher_trainable_blocks).to(device)
         self.student = build_student(args.num_classes, args.pretrained, args.freeze_embeddings).to(device)
         self.projector = HiddenProjector(self.student.depth, self.student.embed_dim, self.teacher.embed_dim).to(device)
 

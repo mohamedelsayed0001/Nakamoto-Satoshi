@@ -55,8 +55,17 @@ def build_student(num_classes, pretrained=True, freeze_embeddings=True):
     return _build(STUDENT_ARCH, num_classes, pretrained, freeze_embeddings)
 
 
-def build_teacher(num_classes, pretrained=True, freeze_embeddings=True):
-    return _build(TEACHER_ARCH, num_classes, pretrained, freeze_embeddings)
+def build_teacher(num_classes, pretrained=True, freeze_embeddings=True, trainable_blocks=-1):
+    """trainable_blocks >= 0: train only the last `trainable_blocks` transformer blocks plus the final norm
+    and head; every earlier block stays at its pretrained weights. -1 trains all blocks."""
+    model = _build(TEACHER_ARCH, num_classes, pretrained, freeze_embeddings)
+    if trainable_blocks >= 0:
+        first_trainable = model.depth - trainable_blocks
+        for i, blk in enumerate(model.vit.blocks):
+            if i < first_trainable:
+                for p in blk.parameters():
+                    p.requires_grad = False
+    return model
 
 
 def _build(arch, num_classes, pretrained, freeze_embeddings):
