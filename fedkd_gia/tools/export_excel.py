@@ -67,11 +67,14 @@ def baseline_sheets(wb, run_dir, prefix="Baseline", note=None):
 
     wc = wb.create_sheet(f"{prefix}_Clients")
     final = recs[-1]["per_client"]
-    rows = [[cid, v.get("student_acc"), v["teacher_test_acc"], v["train_acc_s"], v["train_acc_t"]]
-            for cid, v in sorted(final.items())]
-    write_table(wc, 1, ["Client", f"Global student test acc (round {recs[-1]['round']})",
-                        "Private teacher test acc", "Student train acc (local)", "Teacher train acc (local)"],
-                rows, {2: "0.00%", 3: "0.00%", 4: "0.00%", 5: "0.00%"})
+    rows = [[cid, v.get("student_acc", v.get("student_local_test_acc")), v["teacher_test_acc"], v["train_acc_s"],
+             v["train_acc_t"], f"=E{i}-C{i}"]
+            for i, (cid, v) in enumerate(sorted(final.items()), 2)]
+    write_table(wc, 1, ["Client", f"Global student acc on this client's local test (round {recs[-1]['round']})",
+                        "Private teacher acc on its test data (not trained on)",
+                        "Student acc on own training images", "Teacher acc on own training images",
+                        "Teacher overfitting gap (train - test)"],
+                rows, {2: "0.00%", 3: "0.00%", 4: "0.00%", 5: "0.00%", 6: "0.00%"})
     wc.freeze_panes = "A2"
     held = recs[-1].get("per_heldout_driver")
     if held:
@@ -239,13 +242,18 @@ def main():
     wb = Workbook()
     wb.remove(wb.active)
     baseline_sheets(wb, os.path.join(args.results, "baseline", "run"))
-    cifar = os.path.join(args.results, "cifar100_baseline", "run")
-    if os.path.exists(os.path.join(cifar, "metrics.jsonl")):
-        baseline_sheets(wb, cifar, prefix="CIFAR100_Baseline",
-                        note="Setting: CIFAR-100, 30 IID clients (80/20 local train/test, 1,333 / 334 images each), "
-                             "30 rounds x 1 local epoch, batch 8, 32x32 images upsampled to 224, ViT-B mentor / ViT-S "
-                             "mentee, full FedKD loss, no SVD. Global student acc/F1: official 10k test set; "
-                             "per-client and teacher numbers: each client's local 20% test split.")
+    cifar_note = ("CIFAR-100, 30 IID clients (80/20 local train/test, 1,333 / 334 images each), 30 rounds x 1 local "
+                  "epoch, batch 8, 32x32 images upsampled to 224, ViT-B mentor / ViT-S mentee, full FedKD loss, no "
+                  "SVD. Global student acc/F1: official 10k test set; per-client and teacher numbers: each client's "
+                  "local 20% test split. ")
+    for folder, prefix, extra in [
+            ("old_cifar100_baseline", "C100_v1", "v1: one learning rate 3e-5, Adam, no weight decay."),
+            ("cifar100_baseline_lr_wd", "C100_v2_lrwd", "v2: teacher lr 1e-5, AdamW weight decay 0.05."),
+            ("cifar100_baseline_frozen", "C100_v3_frozen",
+             "v3: as v2, plus only the last 2 teacher blocks (+ norm, head) trained.")]:
+        run = os.path.join(args.results, folder, "run")
+        if os.path.exists(os.path.join(run, "metrics.jsonl")):
+            baseline_sheets(wb, run, prefix=prefix, note="Setting: " + cifar_note + extra)
     for exp in [e for e in sorted(os.listdir(args.results)) if not e.startswith("old_")]:
         files = sorted(glob.glob(os.path.join(args.results, exp, "**", "results.jsonl"), recursive=True))
         if files:
