@@ -242,6 +242,14 @@ def main():
     wb = Workbook()
     wb.remove(wb.active)
     baseline_sheets(wb, os.path.join(args.results, "baseline", "run"))
+    sf_frozen = os.path.join(args.results, "statefarm_baseline_frozen", "run")
+    if os.path.exists(os.path.join(sf_frozen, "metrics.jsonl")):
+        baseline_sheets(wb, sf_frozen, prefix="Baseline_Frozen",
+                        note="Setting: State Farm, 21 driver clients with an 80/20 local split each (5 unseen drivers "
+                             "held out), 30 rounds x 5 local epochs, batch 8; teacher: only the last 2 blocks (+ norm, "
+                             "head) trained, lr 1e-5, AdamW weight decay 0.05. Global student and teacher acc/F1: "
+                             "unseen drivers. _Clients column 2: student on the client's local 20% test (near-duplicate "
+                             "video frames, so optimistic).")
     cifar_note = ("CIFAR-100, 30 IID clients (80/20 local train/test, 1,333 / 334 images each), 30 rounds x 1 local "
                   "epoch, batch 8, 32x32 images upsampled to 224, ViT-B mentor / ViT-S mentee, full FedKD loss, no "
                   "SVD. Global student acc/F1: official 10k test set; per-client and teacher numbers: each client's "
