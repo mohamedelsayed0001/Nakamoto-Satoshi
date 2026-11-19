@@ -39,7 +39,7 @@ args = [
     "--data_root", data_root,
     "--cache_dir", "/tmp/fedkd_cache",
     "--out_dir", "/kaggle/working/run",
-    "--num_workers", "2",
+    "--num_workers", "0",  # Python 3.13 Kaggle images: forked DataLoader workers fail next to filelock
     "--time_budget_hours", BUDGET_HOURS,
 ]
 args += EXTRA
