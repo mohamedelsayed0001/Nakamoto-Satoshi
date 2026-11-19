@@ -13,4 +13,5 @@ print("data_root:", data_root, "| baseline:", baseline, flush=True)
 os.chdir(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 subprocess.run([sys.executable, "attacks/victim.py", "--data_root", data_root, "--cache_dir", "/tmp/fedkd_cache",
                 "--baseline_dir", baseline, "--out_dir", "/kaggle/working/victim",
-                "--num_clients", os.environ.get("NUM_CLIENTS", "10")], check=True)
+                "--num_clients", os.environ.get("NUM_CLIENTS", "10")] + os.environ.get("VICTIM_ARGS", "").split(),
+               check=True)
