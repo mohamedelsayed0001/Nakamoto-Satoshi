@@ -18,6 +18,7 @@ import torch
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from data import NUM_CLASSES, load_cache, num_classes, prepare_cache  # noqa: E402
+from dp import clip_and_noise, flat_norm  # noqa: E402
 from fedkd import fedkd_loss  # noqa: E402
 from models import HiddenProjector, build_student, build_teacher  # noqa: E402
 
@@ -43,6 +44,9 @@ def main():
     p.add_argument("--num_clients", type=int, default=10)
     p.add_argument("--batch_size", type=int, default=8)
     p.add_argument("--seed", type=int, default=0)
+    p.add_argument("--defense", choices=["none", "gaussian"], default="none")
+    p.add_argument("--clip", type=float, default=1.0, help="L2 bound on the released student gradient")
+    p.add_argument("--sigma", type=float, default=0.0, help="noise multiplier (noise std = sigma * clip)")
     args = p.parse_args()
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -78,10 +82,17 @@ def main():
         y = torch.as_tensor(labels[idx], device=device)
         loss, _, _, parts = fedkd_loss(teacher(x, return_internals=True), student(x, return_internals=True), projector, y)
         grads = torch.autograd.grad(loss, list(params.values()))
-        torch.save({"indices": idx, "labels": y.cpu().tolist(), "loss_parts": parts,
-                    "grads": {n: g.detach().cpu() for n, g in zip(params, grads)}},
+        grads = {n: g.detach().cpu() for n, g in zip(params, grads)}
+        # The released gradient gets the same client-side defense as training (no-op unless --defense gaussian),
+        # so the attack is run against what a protected client would actually upload.
+        if args.defense == "gaussian":
+            grads, grad_norm = clip_and_noise(grads, args.clip, args.sigma, torch.Generator().manual_seed(args.seed * 1000 + ci))
+        else:
+            grad_norm = flat_norm(grads)
+        torch.save({"indices": idx, "labels": y.cpu().tolist(), "loss_parts": parts, "grads": grads},
                    os.path.join(args.out_dir, f"grad_{cid}.pt"))
-        index[cid] = {"indices": idx, "labels": y.cpu().tolist(), "loss_parts": parts}
+        index[cid] = {"indices": idx, "labels": y.cpu().tolist(), "loss_parts": parts, "grad_norm": grad_norm,
+                      "defense": args.defense, "clip": args.clip, "sigma": args.sigma}
         print(cid, json.dumps(index[cid]), flush=True)
 
     with open(os.path.join(args.out_dir, "victims.json"), "w") as f:

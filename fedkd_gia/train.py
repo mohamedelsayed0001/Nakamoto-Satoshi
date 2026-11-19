@@ -16,6 +16,7 @@ import numpy as np
 import torch
 
 from data import load_cache, make_client_splits, make_driver_splits, make_iid_splits, num_classes, prepare_cache
+from dp import gaussian_epsilon
 from fedkd import aggregate, client_update, macro_f1, predict
 from models import HiddenProjector, build_student, build_teacher, shared_state
 
@@ -33,6 +34,11 @@ def parse_args(argv=None):
     p.add_argument("--lr", type=float, default=3e-5)
     p.add_argument("--teacher_lr", type=float, default=None, help="private teacher learning rate (default: --lr)")
     p.add_argument("--weight_decay", type=float, default=0.0, help="AdamW decoupled weight decay for all models")
+    p.add_argument("--defense", choices=["none", "gaussian"], default="none",
+                   help="gaussian: clip each released student update to --clip and add N(0, (sigma*clip)^2) noise")
+    p.add_argument("--clip", type=float, default=1.0, help="L2 bound on the released student update")
+    p.add_argument("--sigma", type=float, default=0.0, help="noise multiplier (noise std = sigma * clip)")
+    p.add_argument("--dp_delta", type=float, default=1e-5, help="delta used to report (epsilon, delta)")
     p.add_argument("--teacher_trainable_blocks", type=int, default=-1,
                    help="train only the last N teacher blocks (+ norm, head); -1 = all blocks")
     p.add_argument("--split", choices=["driver", "within", "iid"], default="driver",
@@ -275,6 +281,8 @@ def main(args):
             "mean_client_teacher_macro_f1": float(np.mean([v["teacher_test_macro_f1"] for v in per_client.values()])),
             "per_heldout_driver": per_driver,
             "round_seconds": time.time() - r0,
+            "mean_update_norm": float(np.mean([results[c][1]["update_norm"] for c in clients])),
+            "dp_epsilon": (gaussian_epsilon(args.sigma, rnd + 1, args.dp_delta)[0] if args.defense == "gaussian" else None),
             "per_client": per_client,
         }
         save_atomic(global_state, os.path.join(ckpt_dir, "global_student.pt"))
@@ -286,7 +294,9 @@ def main(args):
         print(f"ROUND {rnd + 1}/{args.rounds}: global student acc {rec['global_student_acc']:.4f} "
               f"F1 {rec['global_student_macro_f1']:.4f} | mean teacher acc {rec['mean_client_teacher_acc']:.4f} "
               f"F1 {rec['mean_client_teacher_macro_f1']:.4f} "
-              f"| {rec['round_seconds'] / 60:.1f} min", flush=True)
+              f"| update norm {rec['mean_update_norm']:.4g}"
+              + (f" | eps {rec['dp_epsilon']:.4g}" if rec['dp_epsilon'] is not None else "")
+              + f" | {rec['round_seconds'] / 60:.1f} min", flush=True)
 
     done = os.path.exists(os.path.join(args.out_dir, "state.json")) and \
         json.load(open(os.path.join(args.out_dir, "state.json")))["completed_rounds"] >= args.rounds

@@ -21,6 +21,7 @@ import torch.nn.functional as F
 from torch.utils.data import DataLoader
 
 from data import CachedImages
+from dp import clip_and_noise, flat_norm
 from models import shared_state
 
 
@@ -92,8 +93,14 @@ def client_update(teacher, student, projector, images, labels, train_idx, args, 
         if args.max_steps and steps >= args.max_steps:
             break
     delta = {k: (v - start[k]).float().cpu() for k, v in shared_state(student).items()}
+    # Client-side defense on the released student update (no-op unless --defense gaussian).
+    if getattr(args, "defense", "none") == "gaussian":
+        delta, update_norm = clip_and_noise(delta, args.clip, args.sigma, torch.Generator().manual_seed(seed + 7))
+    else:
+        update_norm = flat_norm(delta)
     stats = {k: v / max(steps, 1) for k, v in sums.items()}
-    stats.update(train_acc_t=correct_t / max(n_seen, 1), train_acc_s=correct_s / max(n_seen, 1), steps=steps)
+    stats.update(train_acc_t=correct_t / max(n_seen, 1), train_acc_s=correct_s / max(n_seen, 1), steps=steps,
+                 update_norm=update_norm)
     return delta, stats
 
 
