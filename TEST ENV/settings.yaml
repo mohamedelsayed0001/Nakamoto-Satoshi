@@ -6,7 +6,7 @@
 # ============================================================================
 
 # ---------- data ----------
-dataset: mnist      	# mnist | fashion_mnist
+dataset: mnist       # mnist | fashion_mnist
 data_dir: ../data           # relative to this folder
 train_samples: 12000        # images shared out to clients (of 60,000)
 validation_samples: 5000    # held-out training images, used to score tuning
