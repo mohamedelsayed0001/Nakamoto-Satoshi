@@ -16,7 +16,8 @@ import numpy as np
 import torch
 
 from data import load_cache, make_client_splits, make_driver_splits, make_iid_splits, num_classes, prepare_cache
-from dp import gaussian_epsilon
+from dp import dpsgd_epsilon, dpsgd_sigma_for_epsilon, gaussian_epsilon
+from dpsgd import dpsgd_client_update
 from fedkd import aggregate, client_update, macro_f1, predict
 from models import HiddenProjector, build_student, build_teacher, shared_state
 
@@ -34,10 +35,17 @@ def parse_args(argv=None):
     p.add_argument("--lr", type=float, default=3e-5)
     p.add_argument("--teacher_lr", type=float, default=None, help="private teacher learning rate (default: --lr)")
     p.add_argument("--weight_decay", type=float, default=0.0, help="AdamW decoupled weight decay for all models")
-    p.add_argument("--defense", choices=["none", "gaussian"], default="none",
+    p.add_argument("--defense", choices=["none", "gaussian", "dpsgd"], default="none",
                    help="gaussian: clip each released student update to --clip and add N(0, (sigma*clip)^2) noise")
     p.add_argument("--clip", type=float, default=1.0, help="L2 bound on the released student update")
     p.add_argument("--sigma", type=float, default=0.0, help="noise multiplier (noise std = sigma * clip)")
+    p.add_argument("--dp_epsilon", type=float, default=0.0,
+                   help="dpsgd: target record-level epsilon after all rounds; calibrates --dp_sigma (0 = use --dp_sigma)")
+    p.add_argument("--dp_sigma", type=float, default=1.0, help="dpsgd noise multiplier (noise std = dp_sigma * dp_clip)")
+    p.add_argument("--dp_clip", type=float, default=1.0, help="dpsgd per-image gradient L2 bound")
+    p.add_argument("--dp_batch_size", type=int, default=64, help="dpsgd expected (Poisson) batch size")
+    p.add_argument("--dp_chunk", type=int, default=8, help="dpsgd images per per-sample-gradient pass")
+    p.add_argument("--dp_loop", type=int, default=0, help="dpsgd: 1 = per-image backward loop instead of vmap")
     p.add_argument("--dp_delta", type=float, default=1e-5, help="delta used to report (epsilon, delta)")
     p.add_argument("--teacher_trainable_blocks", type=int, default=-1,
                    help="train only the last N teacher blocks (+ norm, head); -1 = all blocks")
@@ -125,6 +133,23 @@ def main(args):
         msg += f", held-out drivers {args.holdout_drivers} ({len(holdout_idx)} images)"
     print(msg, flush=True)
 
+    dp_plan = {}
+    if args.defense == "dpsgd":
+        # Each client's (q, steps) for the accountant; sigma is calibrated on the worst-off client (smallest N).
+        for cid in clients:
+            n = len(splits[cid]["train"])
+            q = args.dp_batch_size / n
+            dp_plan[cid] = (q, args.local_epochs * int(round(1 / q)))
+        worst = max(dp_plan, key=lambda c: dp_plan[c][0])
+        if args.dp_epsilon > 0:
+            q, per_round = dp_plan[worst]
+            args.dp_sigma = dpsgd_sigma_for_epsilon(args.dp_epsilon, q, per_round * args.rounds, args.dp_delta)
+            with open(os.path.join(args.out_dir, "config.json"), "w") as f:
+                json.dump(vars(args), f, indent=2)
+        print(f"DP-SGD: sigma={args.dp_sigma:.4f} clip={args.dp_clip} expected batch={args.dp_batch_size} "
+              f"q={dp_plan[worst][0]:.5f} steps/round={dp_plan[worst][1]} target eps={args.dp_epsilon} "
+              f"delta={args.dp_delta}", flush=True)
+
     devices = [torch.device(f"cuda:{i}") for i in range(torch.cuda.device_count())] or [torch.device("cpu")]
     workers = [Worker(d, args) for d in devices]
     print(f"devices: {devices}", flush=True)
@@ -184,7 +209,8 @@ def main(args):
                     if worker.device.type == "cuda":
                         torch.cuda.reset_peak_memory_stats(worker.device)
                     seed = args.seed * 100003 + rnd * 1009 + clients.index(cid)
-                    delta, stats = client_update(worker.teacher, worker.student, worker.projector, images, labels,
+                    update_fn = dpsgd_client_update if args.defense == "dpsgd" else client_update
+                    delta, stats = update_fn(worker.teacher, worker.student, worker.projector, images, labels,
                                                  splits[cid]["train"], args, worker.device, seed)
                     # Private mentor after local training: on unseen drivers (split a; all of them in the
                     # final round) or on the client's own held-out images (within split).
@@ -282,7 +308,13 @@ def main(args):
             "per_heldout_driver": per_driver,
             "round_seconds": time.time() - r0,
             "mean_update_norm": float(np.mean([results[c][1]["update_norm"] for c in clients])),
-            "dp_epsilon": (gaussian_epsilon(args.sigma, rnd + 1, args.dp_delta)[0] if args.defense == "gaussian" else None),
+            **({"dp_sigma": args.dp_sigma,
+                "dp_frac_clipped": float(np.mean([results[c][1]["dp_frac_clipped"] for c in clients])),
+                "dp_mean_grad_norm": float(np.mean([results[c][1]["dp_mean_grad_norm"] for c in clients]))}
+               if args.defense == "dpsgd" else {}),
+            "dp_epsilon": (gaussian_epsilon(args.sigma, rnd + 1, args.dp_delta)[0] if args.defense == "gaussian"
+                           else max(dpsgd_epsilon(q, args.dp_sigma, st * (rnd + 1), args.dp_delta)[0]
+                                    for q, st in set(dp_plan.values())) if args.defense == "dpsgd" else None),
             "per_client": per_client,
         }
         save_atomic(global_state, os.path.join(ckpt_dir, "global_student.pt"))

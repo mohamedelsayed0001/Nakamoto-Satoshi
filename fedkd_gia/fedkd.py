@@ -25,7 +25,7 @@ from dp import clip_and_noise, flat_norm
 from models import shared_state
 
 
-def fedkd_loss(t_out, s_out, projector, y):
+def fedkd_loss(t_out, s_out, projector, y, with_parts=True):
     t_logits, t_hidden, t_attn = t_out
     s_logits, s_hidden, s_attn = s_out
     t_logits, s_logits = t_logits.float(), s_logits.float()
@@ -48,6 +48,8 @@ def fedkd_loss(t_out, s_out, projector, y):
 
     adaptive = (ce_t + ce_s).detach()
     total = ce_t + ce_s + (kl_t + kl_s + 2 * hid) / adaptive
+    if not with_parts:  # inside torch.func transforms, where .item() is not allowed
+        return total, t_logits, s_logits, torch.stack([ce_t, ce_s, kl_t, kl_s, hid, total]).detach()
     parts = {"ce_t": ce_t.item(), "ce_s": ce_s.item(), "kl_t": kl_t.item(), "kl_s": kl_s.item(),
              "hid": float(hid), "loss": total.item()}
     return total, t_logits, s_logits, parts

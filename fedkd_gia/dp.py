@@ -39,3 +39,57 @@ def gaussian_epsilon(sigma, releases, delta=1e-5):
     # f(alpha) = a * alpha + L / (alpha - 1) is minimized exactly at alpha = 1 + sqrt(L / a): eps = a + 2 sqrt(a L).
     a, L = releases / (2 * sigma ** 2), math.log(1 / delta)
     return a + 2 * math.sqrt(a * L), 1 + math.sqrt(L / a)
+
+
+# ---------------------------------------------------------------------------------------------------------------
+# Record-level DP-SGD accounting (Poisson-subsampled Gaussian mechanism).
+# Each local step samples every training image independently with probability q, clips each per-image gradient
+# to L2 <= C, sums them and adds N(0, (sigma C)^2). For integer Renyi order alpha the RDP of one step is exactly
+#   eps(alpha) = 1/(alpha-1) * log sum_k C(alpha,k) (1-q)^(alpha-k) q^k exp((k^2 - k) / (2 sigma^2))
+# (Mironov, Talwar, Zhang 2019). Steps compose additively; RDP -> (eps, delta) uses the conversion of
+# Balle et al. 2020 (the one Opacus uses). Only integer orders are searched, which can only over-estimate epsilon.
+# ---------------------------------------------------------------------------------------------------------------
+DPSGD_ORDERS = list(range(2, 256)) + [320, 512, 1024]
+
+
+def _log_add(a, b):
+    m = max(a, b)
+    return m + math.log(math.exp(a - m) + math.exp(b - m)) if m > -math.inf else -math.inf
+
+
+def subsampled_gaussian_rdp(q, sigma, alpha):
+    if q == 0:
+        return 0.0
+    if q == 1.0:
+        return alpha / (2 * sigma ** 2)
+    log_a = -math.inf
+    for k in range(alpha + 1):
+        log_coef = math.lgamma(alpha + 1) - math.lgamma(k + 1) - math.lgamma(alpha - k + 1)
+        term = log_coef + (alpha - k) * math.log1p(-q) + k * math.log(q) + (k * k - k) / (2 * sigma ** 2)
+        log_a = _log_add(log_a, term)
+    return log_a / (alpha - 1)
+
+
+def dpsgd_epsilon(q, sigma, steps, delta=1e-5):
+    """(epsilon, best order) after `steps` Poisson-subsampled Gaussian steps with sampling rate q."""
+    if sigma <= 0:
+        return float("inf"), None
+    best = (float("inf"), None)
+    for a in DPSGD_ORDERS:
+        rdp = steps * subsampled_gaussian_rdp(q, sigma, a)
+        eps = rdp + math.log((a - 1) / a) - (math.log(delta) + math.log(a)) / (a - 1)
+        if eps < best[0]:
+            best = (eps, a)
+    return best
+
+
+def dpsgd_sigma_for_epsilon(target_eps, q, steps, delta=1e-5, tol=1e-4):
+    """Smallest noise multiplier whose epsilon after `steps` steps is <= target_eps (bisection)."""
+    lo, hi = 0.1, 100.0
+    while hi - lo > tol:
+        mid = (lo + hi) / 2
+        if dpsgd_epsilon(q, mid, steps, delta)[0] <= target_eps:
+            hi = mid
+        else:
+            lo = mid
+    return hi

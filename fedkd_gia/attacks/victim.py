@@ -19,6 +19,7 @@ import torch
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from data import NUM_CLASSES, load_cache, num_classes, prepare_cache  # noqa: E402
 from dp import clip_and_noise, flat_norm  # noqa: E402
+from dpsgd import LOSS_SCALE, _trainable, make_sample_grad  # noqa: E402
 from fedkd import fedkd_loss  # noqa: E402
 from models import HiddenProjector, build_student, build_teacher  # noqa: E402
 
@@ -44,7 +45,7 @@ def main():
     p.add_argument("--num_clients", type=int, default=10)
     p.add_argument("--batch_size", type=int, default=8)
     p.add_argument("--seed", type=int, default=0)
-    p.add_argument("--defense", choices=["none", "gaussian"], default="none")
+    p.add_argument("--defense", choices=["none", "gaussian", "dpsgd"], default="none")
     p.add_argument("--clip", type=float, default=1.0, help="L2 bound on the released student gradient")
     p.add_argument("--sigma", type=float, default=0.0, help="noise multiplier (noise std = sigma * clip)")
     args = p.parse_args()
@@ -62,7 +63,14 @@ def main():
     gpath = os.path.join(args.baseline_dir, "ckpt", "global_student.pt")
     student = load_student(gpath, device, nc)
     torch.save(torch.load(gpath, map_location="cpu"), os.path.join(args.out_dir, "global_student.pt"))
-    teacher = build_teacher(nc, pretrained=False).to(device)
+    with open(os.path.join(args.baseline_dir, "config.json")) as f:
+        train_cfg = json.load(f)
+    if args.defense == "dpsgd":
+        # One DP-SGD step exactly as in training: same sigma, per-image clip and jointly clipped parameter set.
+        args.sigma, args.clip = train_cfg["dp_sigma"], train_cfg["dp_clip"]
+        print(f"DP-SGD victim step: sigma={args.sigma:.4f} clip={args.clip}", flush=True)
+    teacher = build_teacher(nc, pretrained=False,
+                            trainable_blocks=train_cfg.get("teacher_trainable_blocks", -1)).to(device)
     projector = HiddenProjector(student.depth, student.embed_dim, teacher.embed_dim).to(device)
     params = {n: p_ for n, p_ in student.named_parameters() if p_.requires_grad}
 
@@ -81,11 +89,28 @@ def main():
         x = to_input(images, idx).to(device)
         y = torch.as_tensor(labels[idx], device=device)
         loss, _, _, parts = fedkd_loss(teacher(x, return_internals=True), student(x, return_internals=True), projector, y)
-        grads = torch.autograd.grad(loss, list(params.values()))
-        grads = {n: g.detach().cpu() for n, g in zip(params, grads)}
+        if args.defense == "dpsgd":
+            allp = _trainable({"t": teacher, "s": student, "p": projector})
+            g, _ = make_sample_grad(teacher, student, projector, False, device.type)(
+                {n: v.detach() for n, v in allp.items()}, x, y)
+            norms = sum((v.float() / LOSS_SCALE).pow(2).flatten(1).sum(1) for v in g.values()).sqrt()
+            factor = (args.clip / (norms + 1e-12)).clamp(max=1.0) / LOSS_SCALE
+            gen = torch.Generator(device=device).manual_seed(args.seed * 1000 + ci + 11)
+            grads = {}
+            for n in params:  # released part: the student's shared parameters
+                summed = torch.einsum("b,b...->...", factor, g["s." + n].float())
+                noise = torch.randn(summed.shape, generator=gen, device=device) * (args.sigma * args.clip)
+                grads[n] = ((summed + noise) / len(y)).cpu()
+            grad_norm = float(norms.mean())
+            del g
+        else:
+            grads = torch.autograd.grad(loss, list(params.values()))
+            grads = {n: g.detach().cpu() for n, g in zip(params, grads)}
         # The released gradient gets the same client-side defense as training (no-op unless --defense gaussian),
         # so the attack is run against what a protected client would actually upload.
-        if args.defense == "gaussian":
+        if args.defense == "dpsgd":
+            pass
+        elif args.defense == "gaussian":
             grads, grad_norm = clip_and_noise(grads, args.clip, args.sigma, torch.Generator().manual_seed(args.seed * 1000 + ci))
         else:
             grad_norm = flat_norm(grads)
