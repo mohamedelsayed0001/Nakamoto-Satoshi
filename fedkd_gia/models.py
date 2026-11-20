@@ -51,14 +51,19 @@ class ViTWithInternals(nn.Module):
         return logits, hidden, attn
 
 
-def build_student(num_classes, pretrained=True, freeze_embeddings=True):
-    return _build(STUDENT_ARCH, num_classes, pretrained, freeze_embeddings)
+def build_student(num_classes, pretrained=True, freeze_embeddings=True, trainable_blocks=-1):
+    """trainable_blocks >= 0: only the last `trainable_blocks` blocks plus final norm and head are trained and
+    shared (parameter-efficient variant for DP); -1 trains every non-embedding parameter."""
+    return _freeze_blocks(_build(STUDENT_ARCH, num_classes, pretrained, freeze_embeddings), trainable_blocks)
 
 
 def build_teacher(num_classes, pretrained=True, freeze_embeddings=True, trainable_blocks=-1):
     """trainable_blocks >= 0: train only the last `trainable_blocks` transformer blocks plus the final norm
     and head; every earlier block stays at its pretrained weights. -1 trains all blocks."""
-    model = _build(TEACHER_ARCH, num_classes, pretrained, freeze_embeddings)
+    return _freeze_blocks(_build(TEACHER_ARCH, num_classes, pretrained, freeze_embeddings), trainable_blocks)
+
+
+def _freeze_blocks(model, trainable_blocks):
     if trainable_blocks >= 0:
         first_trainable = model.depth - trainable_blocks
         for i, blk in enumerate(model.vit.blocks):
@@ -90,6 +95,14 @@ class HiddenProjector(nn.Module):
 
     def forward(self, i, h):
         return self.maps[i](h)
+
+    def train_last(self, k):
+        """k >= 0: only the last k layer maps are trained (the others stay at their fixed random init)."""
+        if k >= 0:
+            for i, m in enumerate(self.maps):
+                for p in m.parameters():
+                    p.requires_grad = i >= len(self.maps) - k
+        return self
 
 
 def shared_state(student):

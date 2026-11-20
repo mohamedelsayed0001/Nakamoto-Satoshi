@@ -47,6 +47,10 @@ def parse_args(argv=None):
     p.add_argument("--dp_chunk", type=int, default=8, help="dpsgd images per per-sample-gradient pass")
     p.add_argument("--dp_loop", type=int, default=0, help="dpsgd: 1 = per-image backward loop instead of vmap")
     p.add_argument("--dp_delta", type=float, default=1e-5, help="delta used to report (epsilon, delta)")
+    p.add_argument("--student_trainable_blocks", type=int, default=-1,
+                   help=">=0: train/share only the student's last N blocks + norm + head (-1: all)")
+    p.add_argument("--projector_trainable_layers", type=int, default=-1,
+                   help=">=0: train only the last N hidden-projector maps (-1: all)")
     p.add_argument("--teacher_trainable_blocks", type=int, default=-1,
                    help="train only the last N teacher blocks (+ norm, head); -1 = all blocks")
     p.add_argument("--split", choices=["driver", "within", "iid"], default="driver",
@@ -77,8 +81,10 @@ class Worker:
         self.device = device
         self.teacher = build_teacher(args.num_classes, args.pretrained, args.freeze_embeddings,
                                      args.teacher_trainable_blocks).to(device)
-        self.student = build_student(args.num_classes, args.pretrained, args.freeze_embeddings).to(device)
-        self.projector = HiddenProjector(self.student.depth, self.student.embed_dim, self.teacher.embed_dim).to(device)
+        self.student = build_student(args.num_classes, args.pretrained, args.freeze_embeddings,
+                                     getattr(args, "student_trainable_blocks", -1)).to(device)
+        self.projector = HiddenProjector(self.student.depth, self.student.embed_dim, self.teacher.embed_dim).train_last(
+            getattr(args, "projector_trainable_layers", -1)).to(device)
 
 
 def init_client_state(args, worker):

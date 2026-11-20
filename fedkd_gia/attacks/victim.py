@@ -29,8 +29,8 @@ def to_input(images, idx):
     return (x - 0.5) / 0.5
 
 
-def load_student(global_state_path, device, n_classes=NUM_CLASSES):
-    student = build_student(n_classes, pretrained=True, freeze_embeddings=True)
+def load_student(global_state_path, device, n_classes=NUM_CLASSES, trainable_blocks=-1):
+    student = build_student(n_classes, pretrained=True, freeze_embeddings=True, trainable_blocks=trainable_blocks)
     student.load_state_dict(torch.load(global_state_path, map_location="cpu"), strict=False)
     return student.to(device).eval()
 
@@ -60,18 +60,20 @@ def main():
     clients = args.clients.split(",") if args.clients else sorted(splits)[: args.num_clients]
 
     os.makedirs(args.out_dir, exist_ok=True)
-    gpath = os.path.join(args.baseline_dir, "ckpt", "global_student.pt")
-    student = load_student(gpath, device, nc)
-    torch.save(torch.load(gpath, map_location="cpu"), os.path.join(args.out_dir, "global_student.pt"))
     with open(os.path.join(args.baseline_dir, "config.json")) as f:
         train_cfg = json.load(f)
+    gpath = os.path.join(args.baseline_dir, "ckpt", "global_student.pt")
+    # Only the parameters the clients actually train and share are in the released gradient.
+    student = load_student(gpath, device, nc, train_cfg.get("student_trainable_blocks", -1))
+    torch.save(torch.load(gpath, map_location="cpu"), os.path.join(args.out_dir, "global_student.pt"))
     if args.defense == "dpsgd":
         # One DP-SGD step exactly as in training: same sigma, per-image clip and jointly clipped parameter set.
         args.sigma, args.clip = train_cfg["dp_sigma"], train_cfg["dp_clip"]
         print(f"DP-SGD victim step: sigma={args.sigma:.4f} clip={args.clip}", flush=True)
     teacher = build_teacher(nc, pretrained=False,
                             trainable_blocks=train_cfg.get("teacher_trainable_blocks", -1)).to(device)
-    projector = HiddenProjector(student.depth, student.embed_dim, teacher.embed_dim).to(device)
+    projector = HiddenProjector(student.depth, student.embed_dim, teacher.embed_dim).train_last(
+        train_cfg.get("projector_trainable_layers", -1)).to(device)
     params = {n: p_ for n, p_ in student.named_parameters() if p_.requires_grad}
 
     index = {}
