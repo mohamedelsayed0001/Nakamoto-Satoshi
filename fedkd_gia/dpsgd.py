@@ -25,7 +25,7 @@ from torch.func import functional_call, grad, vmap
 from fedkd import fedkd_loss
 from models import shared_state
 
-LOSS_SCALE = 1024.0  # static fp16 loss scale; per-image gradients are unscaled before clipping
+LOSS_SCALE = 8.0  # static fp16 loss scale (1024 overflowed: per-image norms are ~125); unscaled before clipping
 
 
 def _trainable(modules):
