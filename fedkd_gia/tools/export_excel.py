@@ -21,6 +21,10 @@ from openpyxl.drawing.image import Image as XLImage
 from openpyxl.styles import Alignment, Font, PatternFill
 from openpyxl.utils import get_column_letter
 from PIL import Image
+import sys
+
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from dp import gaussian_epsilon  # noqa: E402
 
 FONT = "Arial"
 HEAD_FILL = PatternFill("solid", start_color="DDEBF7")
@@ -232,6 +236,55 @@ def comparison_sheet(wb, results_dir, prefix="gi_s"):
     ws.freeze_panes = "B2"
 
 
+DP_RUNS = [("State Farm (frozen teacher)", "statefarm_baseline_frozen", "dp_sf_s1em"),
+           ("CIFAR-100 v3 (frozen teacher)", "cifar100_baseline_frozen", "dp_c100_s1em")]
+
+
+def dp_sheets(wb, results_dir):
+    """Client-side Gaussian defense sweep: one row per (dataset, sigma); sigma 0 = undefended baseline."""
+    runs = []
+    for ds, base, stem in DP_RUNS:
+        for sigma_tag, folder in [("0", base)] + [(f"1e-{k}", f"{stem}{k}") for k in (4, 3, 2)]:
+            path = os.path.join(results_dir, folder, "run", "metrics.jsonl")
+            if os.path.exists(path):
+                runs.append((ds, sigma_tag, folder, [json.loads(l) for l in open(path) if l.strip()]))
+    if not runs:
+        return
+    rows = []
+    for ds, sigma_tag, folder, recs in runs:
+        cfg_p = os.path.join(results_dir, folder, "run", "config.json")
+        cfg = json.load(open(cfg_p)) if os.path.exists(cfg_p) else {}
+        last = recs[-1]
+        # Recomputed with the exact optimum over alpha (runs logged a coarse-grid value that was slightly larger).
+        eps = gaussian_epsilon(cfg["sigma"], len(recs), cfg.get("dp_delta", 1e-5))[0] \
+            if cfg.get("defense") == "gaussian" else None
+        rows.append([ds, float(sigma_tag), cfg.get("clip") if cfg.get("defense") == "gaussian" else None,
+                     eps if eps not in (None, float("inf")) else "no DP", last["global_student_acc"],
+                     max(r["global_student_acc"] for r in recs), last.get("global_student_macro_f1"),
+                     last.get("mean_client_student_acc"), last.get("mean_client_teacher_acc"),
+                     last.get("mean_update_norm"), folder])
+    ws = wb.create_sheet("DP_Sweep")
+    write_table(ws, 1, ["Dataset", "Noise multiplier sigma", "Clip C (training update)",
+                        "Client-level epsilon after 30 rounds (delta 1e-5)", "Final global student acc",
+                        "Best global student acc", "Final global student macro-F1", "Mean per-client student acc",
+                        "Mean private teacher acc", "Mean pre-clip update norm (round 30)", "Results folder"],
+                rows, {2: "0.0E+00", 4: "0.00E+00", 5: "0.00%", 6: "0.00%", 7: "0.0000", 8: "0.00%", 9: "0.00%", 10: "0.00"})
+    ws.cell(row=len(rows) + 3, column=1,
+            value="Defense: each client clips its whole released student update to L2 <= C and adds N(0, (sigma C)^2) "
+                  "to every coordinate (Camel / DP-FedAvg style client-side Gaussian mechanism). Epsilon: client-level "
+                  "local DP of a client's entire local dataset against the server, RDP composition over 30 releases, "
+                  "no subsampling or shuffling amplification. The noise norm is about sigma * C * 4,600 (21.3M student "
+                  "parameters), so only very small sigma keeps accuracy, and the formal epsilon there is vacuous; "
+                  "the protection is measured empirically by the attack PSNR.").font = Font(name=FONT, italic=True)
+    wr = wb.create_sheet("DP_Rounds")
+    n = max(len(r[3]) for r in runs)
+    headers = ["Round"] + [f"{ds.split(' (')[0]} sigma={s}" for ds, s, _, _ in runs]
+    rows = [[i + 1] + [recs[i]["global_student_acc"] if i < len(recs) else None for _, _, _, recs in runs]
+            for i in range(n)]
+    write_table(wr, 1, headers, rows, {c: "0.00%" for c in range(2, len(headers) + 1)})
+    wr.freeze_panes = "B2"
+
+
 def main():
     p = argparse.ArgumentParser()
     p.add_argument("--results", default=os.path.join(os.path.dirname(os.path.dirname(__file__)), "results"))
@@ -267,6 +320,7 @@ def main():
         if files:
             experiment_sheets(wb, exp, files)
     comparison_sheet(wb, args.results)
+    dp_sheets(wb, args.results)
     for exp in [e for e in sorted(os.listdir(args.results)) if not e.startswith("old_")]:
         plots = sorted(glob.glob(os.path.join(args.results, exp, "plots", "*.png")))
         if plots:

@@ -36,9 +36,6 @@ def gaussian_epsilon(sigma, releases, delta=1e-5):
     """(epsilon, best alpha) of `releases` compositions of the Gaussian mechanism with noise multiplier sigma."""
     if sigma <= 0:
         return float("inf"), None
-    best = (float("inf"), None)
-    for alpha in [1 + x / 10 for x in range(1, 100)] + list(range(12, 64)) + [128, 256, 512, 1024, 4096, 16384]:
-        eps = releases * alpha / (2 * sigma ** 2) + math.log(1 / delta) / (alpha - 1)
-        if eps < best[0]:
-            best = (eps, alpha)
-    return best
+    # f(alpha) = a * alpha + L / (alpha - 1) is minimized exactly at alpha = 1 + sqrt(L / a): eps = a + 2 sqrt(a L).
+    a, L = releases / (2 * sigma ** 2), math.log(1 / delta)
+    return a + 2 * math.sqrt(a * L), 1 + math.sqrt(L / a)
