@@ -285,6 +285,54 @@ def dp_sheets(wb, results_dir):
     wr.freeze_panes = "B2"
 
 
+DPSGD_RUNS = [("eps 1, full model", "dpsgd_c100_eps1", None),
+              ("eps 8, full model", "dpsgd_c100_eps8", None),
+              ("eps 8, last block only", "dpsgd_c100_eps8_small", "DP_C100_dpsgd_eps8")]
+
+
+def dpsgd_sheet(wb, results_dir):
+    """Record-level DP-SGD on CIFAR-100 v3: accuracy, privacy and (where run) attack leakage."""
+    def gain(prefix, setting):
+        vals = []
+        for c in ("c01", "c02"):
+            f = os.path.join(results_dir, f"{prefix}_{setting}_full", c, "results.jsonl")
+            if not os.path.exists(f):
+                return None
+            r = [json.loads(l) for l in open(f) if l.strip()][-1]
+            vals.append(r["psnr_consensus"] - r["psnr_gray_floor"])
+        return sum(vals) / len(vals)
+
+    rows = []
+    for name, folder, atk in DPSGD_RUNS:
+        path = os.path.join(results_dir, folder, "run", "metrics.jsonl")
+        if not os.path.exists(path):
+            continue
+        recs = [json.loads(l) for l in open(path) if l.strip()]
+        cfg = json.load(open(os.path.join(results_dir, folder, "run", "config.json")))
+        last = recs[-1]
+        rows.append([name, cfg.get("dp_epsilon"), last.get("dp_epsilon"), cfg.get("dp_sigma"), cfg.get("dp_clip"),
+                     cfg.get("dp_batch_size"), cfg.get("student_trainable_blocks"), cfg.get("lr"),
+                     last["global_student_acc"], max(r["global_student_acc"] for r in recs),
+                     last.get("mean_client_teacher_acc"), last.get("dp_frac_clipped"),
+                     gain(atk, "S1") if atk else "not attacked", gain(atk, "S2") if atk else "not attacked", folder])
+    if not rows:
+        return
+    ws = wb.create_sheet("DPSGD")
+    write_table(ws, 1, ["Run", "Target epsilon", "Accounted epsilon after 30 rounds", "Noise multiplier sigma",
+                        "Per-image clip C", "Expected batch", "Student trainable blocks (-1 = all)", "Student lr",
+                        "Final global student acc", "Best global student acc", "Mean private teacher acc",
+                        "Fraction of per-image grads clipped", "Attack gain S1 (dB, mean c01/c02)",
+                        "Attack gain S2 (dB, mean c01/c02)", "Results folder"],
+                rows, {3: "0.00", 4: "0.000", 9: "0.00%", 10: "0.00%", 11: "0.00%", 12: "0.00%", 13: "0.00", 14: "0.00"})
+    ws.cell(row=len(rows) + 3, column=1,
+            value="Record-level DP-SGD (Abadi et al. 2016) inside each client's local FedKD training: Poisson sampling "
+                  "q = 64/1333, per-image gradient over teacher + student + projector jointly, clip to C, sum, add "
+                  "N(0, (sigma C)^2), divide by 64, AdamW. Epsilon per client, per image, whole 30-round run (630 "
+                  "steps), delta 1e-5, subsampled-Gaussian RDP accountant. Attack: round-30 victim gradient = one "
+                  "DP-SGD step on a batch of 8 (single-step epsilon 4.91 at eps-8 sigma), GradInversion 20k "
+                  "iterations, 2 seeds. Gain = consensus PSNR minus gray-image PSNR.").font = Font(name=FONT, italic=True)
+
+
 def main():
     p = argparse.ArgumentParser()
     p.add_argument("--results", default=os.path.join(os.path.dirname(os.path.dirname(__file__)), "results"))
@@ -321,6 +369,7 @@ def main():
             experiment_sheets(wb, exp, files)
     comparison_sheet(wb, args.results)
     dp_sheets(wb, args.results)
+    dpsgd_sheet(wb, args.results)
     for exp in [e for e in sorted(os.listdir(args.results)) if not e.startswith("old_")]:
         plots = sorted(glob.glob(os.path.join(args.results, exp, "plots", "*.png")))
         if plots:
